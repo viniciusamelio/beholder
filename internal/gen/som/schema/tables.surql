@@ -8,6 +8,16 @@ DEFINE FIELD created_at ON TABLE session TYPE option<datetime | null>;
 DEFINE FIELD updated_at ON TABLE session TYPE option<datetime | null>;
 DEFINE FIELD env ON TABLE session TYPE option<record<environment> | null>;
 
+DEFINE TABLE response SCHEMAFULL TYPE NORMAL PERMISSIONS FULL;
+DEFINE FIELD uid ON TABLE response TYPE int ASSERT $value >= -9223372036854775808 AND $value <= 9223372036854775807;
+DEFINE FIELD status ON TABLE response TYPE int ASSERT $value >= -9223372036854775808 AND $value <= 9223372036854775807;
+DEFINE FIELD call_uid ON TABLE response TYPE int ASSERT $value >= -9223372036854775808 AND $value <= 9223372036854775807;
+DEFINE FIELD body ON TABLE response TYPE option<string | null>;
+DEFINE FIELD headers ON TABLE response TYPE option<string | null>;
+DEFINE FIELD created_at ON TABLE response TYPE option<datetime | null>;
+DEFINE FIELD sent_at ON TABLE response TYPE datetime;
+DEFINE FIELD call ON TABLE response TYPE option<record<call> | null>;
+
 DEFINE TABLE environment SCHEMAFULL TYPE NORMAL PERMISSIONS FULL;
 DEFINE FIELD uid ON TABLE environment TYPE int ASSERT $value >= -9223372036854775808 AND $value <= 9223372036854775807;
 DEFINE FIELD name ON TABLE environment TYPE string;
@@ -16,3 +26,16 @@ DEFINE FIELD tags.* ON TABLE environment TYPE string;
 DEFINE FIELD base_url ON TABLE environment TYPE string;
 DEFINE FIELD created_at ON TABLE environment TYPE option<datetime | null>;
 DEFINE FIELD updated_at ON TABLE environment TYPE option<datetime | null>;
+
+DEFINE TABLE call SCHEMAFULL TYPE NORMAL PERMISSIONS FULL;
+DEFINE FIELD uid ON TABLE call TYPE int ASSERT $value >= -9223372036854775808 AND $value <= 9223372036854775807;
+DEFINE FIELD session_uid ON TABLE call TYPE option<int | null> ASSERT $value == NONE OR $value == NULL OR $value >= -9223372036854775808 AND $value <= 9223372036854775807;
+DEFINE FIELD name ON TABLE call TYPE string;
+DEFINE FIELD path ON TABLE call TYPE option<string | null>;
+DEFINE FIELD body ON TABLE call TYPE option<string | null>;
+DEFINE FIELD query_params ON TABLE call TYPE option<string | null>;
+DEFINE FIELD user_id ON TABLE call TYPE option<string | null>;
+DEFINE FIELD method ON TABLE call TYPE string;
+DEFINE FIELD called_at ON TABLE call TYPE datetime;
+DEFINE FIELD created_at ON TABLE call TYPE option<datetime | null>;
+DEFINE FIELD session ON TABLE call TYPE option<record<session> | null>;

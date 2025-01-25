@@ -6,6 +6,7 @@ import (
 	"beholder-api/internal/services"
 	"beholder-api/internal/utils"
 	"fmt"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -17,6 +18,7 @@ func main() {
 	ds := services.NewSomDatasource()
 	repository := repositories.NewEnvironmentRepository(*ds)
 	sessionRepo := repositories.NewSessionRepository(*ds)
+	callRepo := repositories.NewCallRepository(*ds)
 
 	repository.Create(models.Environment{
 		Name:    "local-env",
@@ -38,14 +40,26 @@ func main() {
 				},
 				func(e *models.Session) {
 					fmt.Printf("Success: %d	\n", e.UID)
-					sessionRepo.Delete(e.UID).Fold(
+					path := "/user"
+					queryParams := "org_id=ashduashdu&something=127129"
+					body := "{'name' : 'Lorem ipsum', 'email' : 'lorem@ipsum.com'}"
+					callRepo.Create(models.Call{
+						Name:        "Create User",
+						Method:      "POST",
+						QueryParams: &queryParams,
+						Body:        &body,
+						CalledAt:    time.Now(),
+						SessionUID:  &e.UID,
+						Session:     e,
+						Path:        &path,
+					}).Fold(
 						func(f utils.Failure) {
 							fmt.Printf("Failure: %s\n", f.Message())
 						},
-						func(e bool) {
-							fmt.Printf("Session deleted")
-						},
-					)
+						func(e *models.Call) {
+							fmt.Printf("Call created successfully: %d \n", e.UID)
+
+						})
 				},
 			)
 		},

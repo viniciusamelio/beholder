@@ -5,7 +5,9 @@ import "context"
 
 type Client interface {
 	SessionRepo() SessionRepo
+	ResponseRepo() ResponseRepo
 	EnvironmentRepo() EnvironmentRepo
+	CallRepo() CallRepo
 	ApplySchema(ctx context.Context) error
 	Close()
 }
