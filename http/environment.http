@@ -1,0 +1,21 @@
+@BASE=http://localhost:8080
+
+### Create env
+POST {{BASE}}/environment
+Content-Type: application/json
+
+{
+    "name" : "dev",
+    "tags" : ["dev", "ambiente de dev"],
+    "base_url" : "https://dev.viniciusamelio.com/"
+}
+
+### Update env
+PUT {{BASE}}/environment/2145670309036949504
+Content-Type: application/json
+
+{
+    "name" : "homolog editado 2x",
+    "tags" : ["hml", "minha tag", "tag-jhonson"],
+    "base_url" : "https://hml.viniciusamelio.com/"
+}

@@ -14,8 +14,8 @@ type EnvironmentRepository struct {
 	tableName string
 }
 
-func NewEnvironmentRepository(ds services.SomDatasource) EnvironmentRepository {
-	return EnvironmentRepository{ds: ds, tableName: "environment"}
+func NewEnvironmentRepository(ds *services.SomDatasource) *EnvironmentRepository {
+	return &EnvironmentRepository{ds: *ds, tableName: "environment"}
 }
 
 func (er *EnvironmentRepository) Create(env models.Environment) utils.Either[utils.Failure, *models.Environment] {

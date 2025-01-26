@@ -14,9 +14,9 @@ type SessionRepository struct {
 	tableName string
 }
 
-func NewSessionRepository(ds services.SomDatasource) *SessionRepository {
+func NewSessionRepository(ds *services.SomDatasource) *SessionRepository {
 	return &SessionRepository{
-		ds:        ds,
+		ds:        *ds,
 		tableName: "session",
 	}
 }

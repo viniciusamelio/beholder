@@ -15,9 +15,9 @@ type CallRepository struct {
 	tableName string
 }
 
-func NewCallRepository(ds services.SomDatasource) *CallRepository {
+func NewCallRepository(ds *services.SomDatasource) *CallRepository {
 	return &CallRepository{
-		ds:        ds,
+		ds:        *ds,
 		tableName: "call",
 	}
 }
