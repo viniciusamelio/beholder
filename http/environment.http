@@ -15,7 +15,7 @@ PUT {{BASE}}/environment/2145670309036949504
 Content-Type: application/json
 
 {
-    "name" : "homolog editado 2x",
-    "tags" : ["hml", "minha tag", "tag-jhonson"],
-    "base_url" : "https://hml.viniciusamelio.com/"
+    "name" : "homolog editado 3x",
+    "tags" : ["dev", "mvp"],
+    "base_url" : "https://webhook.site/bae63b0a-0234-4cb1-8a06-d395c8871f0f"
 }

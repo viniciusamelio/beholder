@@ -1,0 +1,14 @@
+@BASE=http://localhost:8080
+
+### Create session
+POST {{BASE}}/session
+Content-Type: application/json
+
+{
+    "env_uid" : 2145670309036949504,
+    "user_id" : "homolog-user"
+}
+
+### Replay Session
+POST {{BASE}}/session/2146018584579538944/replay
+Content-Type: application/json

@@ -14,5 +14,5 @@ type Session struct {
 	CreatedAt *time.Time `json:"created_at" som:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at" som:"updated_at"`
 
-	Env Environment `json:"envs" som:"envs"`
+	Env *Environment `json:"env" som:"->env"`
 }

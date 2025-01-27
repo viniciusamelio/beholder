@@ -3,6 +3,7 @@ package repositories
 import (
 	"beholder-api/internal/application/models"
 	"beholder-api/internal/gen/som/where"
+	"beholder-api/internal/gen/som/with"
 	"beholder-api/internal/services"
 	"beholder-api/internal/utils"
 	"context"
@@ -25,8 +26,19 @@ func (sr *SessionRepository) Create(session models.Session) utils.Either[utils.F
 	session.UID = utils.GenSnowflakeID()
 	now := time.Now()
 	session.CreatedAt = &now
-	err := sr.ds.Session().Create(context.Background(), &session)
-	sr.ds.Session().Relate()
+
+	env, err := sr.ds.Environment().Query().Filter(
+		where.Environment.UID.Equal(session.EnvUID),
+	).First(
+		context.Background(),
+	)
+
+	if err != nil {
+		code := 404
+		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("environment not found", &code))
+	}
+	session.Env = env
+	err = sr.ds.Session().Create(context.Background(), &session)
 	if err != nil {
 		code := 400
 		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("failed to create session", &code))
@@ -69,4 +81,30 @@ func (sr *SessionRepository) Delete(id int) utils.Either[utils.Failure, bool] {
 	)
 	return result
 
+}
+
+func (sr *SessionRepository) GetCalls(id int) utils.Either[utils.Failure, []*models.Call] {
+	foundSessionOrFailure := sr.GetByID(id)
+	var result utils.Either[utils.Failure, []*models.Call]
+	foundSessionOrFailure.Fold(
+		func(f utils.Failure) {
+			result = utils.NewLeft[utils.Failure, []*models.Call](f)
+		},
+		func(s *models.Session) {
+			calls, err := sr.ds.Call().Query().Filter(
+				where.Call.SessionUID.Equal(&id),
+			).Fetch(
+				with.Call.Session(),
+				with.Call.Session().Env(),
+			).All(
+				context.Background(),
+			)
+			if err != nil {
+				code := 400
+				result = utils.NewLeft[utils.Failure, []*models.Call](utils.NewUnknownFailure("failed to get calls", &code))
+			}
+			result = utils.NewRight[utils.Failure](calls)
+		},
+	)
+	return result
 }

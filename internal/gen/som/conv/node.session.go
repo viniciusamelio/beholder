@@ -21,7 +21,7 @@ type Session struct {
 func FromSession(data models.Session) Session {
 	return Session{
 		CreatedAt: fromTimePtr(data.CreatedAt),
-		Env:       toEnvironmentLink(data.Env),
+		Env:       toEnvironmentLinkPtr(data.Env),
 		EnvUID:    data.EnvUID,
 		UID:       data.UID,
 		UpdatedAt: fromTimePtr(data.UpdatedAt),
@@ -34,7 +34,7 @@ func FromSessionPtr(data *models.Session) *Session {
 	}
 	return &Session{
 		CreatedAt: fromTimePtr(data.CreatedAt),
-		Env:       toEnvironmentLink(data.Env),
+		Env:       toEnvironmentLinkPtr(data.Env),
 		EnvUID:    data.EnvUID,
 		UID:       data.UID,
 		UpdatedAt: fromTimePtr(data.UpdatedAt),
@@ -45,7 +45,7 @@ func FromSessionPtr(data *models.Session) *Session {
 func ToSession(data Session) models.Session {
 	return models.Session{
 		CreatedAt: toTimePtr(data.CreatedAt),
-		Env:       fromEnvironmentLink(data.Env),
+		Env:       fromEnvironmentLinkPtr(data.Env),
 		EnvUID:    data.EnvUID,
 		Node:      som.NewNode(data.ID),
 		UID:       data.UID,
@@ -59,7 +59,7 @@ func ToSessionPtr(data *Session) *models.Session {
 	}
 	return &models.Session{
 		CreatedAt: toTimePtr(data.CreatedAt),
-		Env:       fromEnvironmentLink(data.Env),
+		Env:       fromEnvironmentLinkPtr(data.Env),
 		EnvUID:    data.EnvUID,
 		Node:      som.NewNode(data.ID),
 		UID:       data.UID,

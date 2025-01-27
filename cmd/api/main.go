@@ -4,6 +4,7 @@ import (
 	"beholder-api/cmd/api/router"
 	"beholder-api/internal/data/repositories"
 	"beholder-api/internal/services"
+	"beholder-api/internal/services/providers"
 
 	_ "github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
@@ -20,6 +21,7 @@ func main() {
 			repositories.NewCallRepository,
 			repositories.NewEnvironmentRepository,
 			repositories.NewSessionRepository,
+			providers.NewCloudTasksProvider,
 		),
 		fx.Invoke(
 			router.Router,
