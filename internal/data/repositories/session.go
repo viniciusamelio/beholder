@@ -21,17 +21,17 @@ func NewSessionRepository(ds *services.SomDatasource) *SessionRepository {
 	}
 }
 
-func (sr *SessionRepository) Create(session *models.Session) utils.Either[utils.Failure, *models.Session] {
+func (sr *SessionRepository) Create(session models.Session) utils.Either[utils.Failure, *models.Session] {
 	session.UID = utils.GenSnowflakeID()
 	now := time.Now()
 	session.CreatedAt = &now
-	err := sr.ds.Session().Create(context.Background(), session)
+	err := sr.ds.Session().Create(context.Background(), &session)
 	sr.ds.Session().Relate()
 	if err != nil {
 		code := 400
 		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("failed to create session", &code))
 	}
-	return utils.NewRight[utils.Failure](session)
+	return utils.NewRight[utils.Failure](&session)
 }
 
 func (sr *SessionRepository) GetByID(id int) utils.Either[utils.Failure, *models.Session] {
