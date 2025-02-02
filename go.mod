@@ -11,6 +11,7 @@ require (
 	github.com/godruoyi/go-snowflake v0.0.2
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.15.0
+	github.com/guregu/null v4.0.0+incompatible
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.13.3
 	github.com/surrealdb/surrealdb.go v0.3.2

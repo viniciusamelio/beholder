@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"beholder-api/internal/application/models"
+	"beholder-api/internal/dtos"
 	"beholder-api/internal/gen/som/where"
 	"beholder-api/internal/gen/som/with"
 	"beholder-api/internal/services"
@@ -60,6 +61,22 @@ func (sr *SessionRepository) GetByID(id int) utils.Either[utils.Failure, *models
 	}
 
 	return utils.NewRight[utils.Failure](found)
+}
+
+func (sr *SessionRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Session] {
+	sessions, err := sr.ds.Session().Query().
+		Limit(int(*pagination.Take.Ptr())).
+		Offset(int(pagination.Skip.Int64)).
+		Fetch(
+			with.Session.Env(),
+		).
+		All(context.Background())
+	if err != nil {
+		code := 400
+		return utils.NewLeft[utils.Failure, *[]*models.Session](utils.NewUnknownFailure("failed to get sessions", &code))
+	}
+
+	return utils.NewRight[utils.Failure](&sessions)
 }
 
 func (sr *SessionRepository) Delete(id int) utils.Either[utils.Failure, bool] {

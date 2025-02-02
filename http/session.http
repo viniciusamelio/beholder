@@ -12,3 +12,7 @@ Content-Type: application/json
 ### Replay Session
 POST {{BASE}}/session/2146018584579538944/replay
 Content-Type: application/json
+
+### Get sessions
+GET {{BASE}}/session
+Content-Type: application/json
