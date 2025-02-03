@@ -4,13 +4,13 @@ import (
 	"beholder-api/internal/dtos"
 	"strconv"
 
+	"github.com/guregu/null"
 	"github.com/labstack/echo/v4"
 )
 
 type PaginationContext struct {
 	echo.Context
-	Take int64
-	Skip int64
+	Pagination dtos.PaginationDto
 }
 
 func PaginationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
@@ -24,10 +24,16 @@ func PaginationMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 			take = int(dtos.DefaultPagination.Take.Int64)
 		}
 
+		if take > 100 {
+			return ErrorResponse(c, 400, "Take argument must be at most 100")
+		}
+
 		return next(&PaginationContext{
 			c,
-			int64(take),
-			int64(skip),
+			dtos.PaginationDto{
+				Skip: null.IntFrom(int64(skip)),
+				Take: null.IntFrom(int64(take)),
+			},
 		})
 	}
 }

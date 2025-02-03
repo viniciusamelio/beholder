@@ -12,3 +12,7 @@ Content-Type: application/json
     "session_uid" : 2146018584579538944,
     "body" : "{'foo' : 'bar edited'}"
 }
+
+### Get calls
+GET {{BASE}}/call
+Content-Type: application/json

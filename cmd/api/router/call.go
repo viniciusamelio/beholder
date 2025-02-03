@@ -12,6 +12,19 @@ import (
 func CallRouter(r *echo.Echo, repo repositories.CallRepository) {
 	g := r.Group("/call")
 
+	g.GET("", PaginationMiddleware(func(c echo.Context) error {
+		context := c.(*PaginationContext)
+		repo.Get(context.Pagination).Fold(
+			func(f utils.Failure) {
+				ErrorResponse(c, *f.Code(), f.Message())
+			},
+			func(calls *[]*models.Call) {
+				Response(c, 200, calls)
+			},
+		)
+		return nil
+	}))
+
 	g.POST("", func(c echo.Context) error {
 		input := dtos.CreateCallDto{}
 		err := c.Bind(&input)
