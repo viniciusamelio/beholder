@@ -1,6 +1,8 @@
 package templates
 
-templ Sidebar() {
+import "beholder-api/internal/application/models"
+
+templ Sidebar(envs *[]*models.Environment) {
 <aside class="sidebar w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
     <div class="p-4 border-b border-gray-200">
         <div class="dropdown w-full">
@@ -44,22 +46,19 @@ templ Sidebar() {
                 </div>
             </div>
 
-            <!-- Envs Section -->
             <div>
                 <h3 class="text-xs font-semibold text-gray-500 mb-2">Environments</h3>
                 <div class="space-y-1">
-                    <a href="#" class="sidebar-item flex items-center text-sm px-3 py-2 rounded-lg">
-                        <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
-                        Dev
-                    </a>
-                    <a href="#" class="sidebar-item flex items-center text-sm px-3 py-2 rounded-lg">
-                        <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>
-                        Staging
-                    </a>
-                    <a href="#" class="sidebar-item flex items-center text-sm px-3 py-2 rounded-lg">
-                        <span class="w-2 h-2 rounded-full bg-pink-500 mr-2"></span>
-                        Prod
-                    </a>
+                    <ul>
+                        for _,env := range *envs{
+                            <li>
+                                <a href={"/env/"+templ.SafeURL(env.UID)} class="sidebar-item flex items-center text-sm px-3 py-2 rounded-lg">
+                                    <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
+                                    {env.Name}
+                                </a>
+                            </li>
+                        }
+                    </ul>                    
                 </div>
             </div>
         </div>

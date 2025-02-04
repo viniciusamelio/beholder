@@ -1,10 +1,11 @@
 package templates
 
+import "beholder-api/internal/application/models"
 
-templ Home(){
+templ Home(envs *[]*models.Environment){
     @Wrapper() {
         <div class="flex flex-row gap-2">
-            @Sidebar(){
+            @Sidebar(envs){
 
             }
         </div>

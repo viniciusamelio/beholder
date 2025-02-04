@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"beholder-api/internal/application/models"
+	"beholder-api/internal/dtos"
 	"beholder-api/internal/gen/som/where"
 	"beholder-api/internal/services"
 	"beholder-api/internal/utils"
@@ -16,6 +17,20 @@ type EnvironmentRepository struct {
 
 func NewEnvironmentRepository(ds *services.SomDatasource) *EnvironmentRepository {
 	return &EnvironmentRepository{ds: *ds, tableName: "environment"}
+}
+
+func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Environment] {
+	context := context.Background()
+	foundItems, err := er.ds.Environment().
+		Query().
+		Limit(int(pagination.Take.Int64)).
+		Offset(int(pagination.Skip.Int64)).
+		Order().
+		All(context)
+	if err != nil {
+		return utils.NewLeft[utils.Failure, *[]*models.Environment](utils.NewUnknownFailure(err.Error(), nil))
+	}
+	return utils.NewRight[utils.Failure](&foundItems)
 }
 
 func (er *EnvironmentRepository) Create(env models.Environment) utils.Either[utils.Failure, *models.Environment] {
