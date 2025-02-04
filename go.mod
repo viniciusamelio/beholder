@@ -3,6 +3,7 @@ module beholder-api
 go 1.23.3
 
 require (
+	github.com/a-h/templ v0.3.833
 	github.com/fxamacker/cbor/v2 v2.7.0
 	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/go-playground/validator/v10 v10.24.0
@@ -20,7 +21,7 @@ require (
 )
 
 require (
-	github.com/andybalholm/brotli v1.0.6 // indirect
+	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/coder/websocket v1.8.12 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.8 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
