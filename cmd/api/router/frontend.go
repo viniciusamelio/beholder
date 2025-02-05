@@ -3,6 +3,7 @@ package router
 import (
 	"beholder-api/internal/application/models"
 	"beholder-api/internal/data/repositories"
+	"beholder-api/internal/dtos"
 	"beholder-api/internal/resources/templates"
 	"beholder-api/internal/utils"
 	"fmt"
@@ -23,7 +24,12 @@ func FrontendRouter(e *echo.Echo, envRepo repositories.EnvironmentRepository, se
 					ErrorResponse(c, *f.Code(), f.Message())
 				},
 				func(e *[]*models.Environment) {
-					RenderTempl(c, templates.Home(e))
+					RenderTempl(c, templates.Home(e, []templates.BreadcrumbItem{
+						templates.BreadcrumbItem{
+							Name:   "Environments",
+							Active: true,
+						},
+					}))
 				},
 			)
 		return nil
@@ -42,7 +48,24 @@ func FrontendRouter(e *echo.Echo, envRepo repositories.EnvironmentRepository, se
 						ErrorResponse(c, *f.Code(), f.Message())
 					},
 					func(e *models.Environment) {
-						RenderTempl(c, templates.EnvSessions(e))
+						envRepo.Get(dtos.DefaultPagination).Fold(
+							func(f utils.Failure) {
+								ErrorResponse(c, *f.Code(), f.Message())
+							},
+							func(envs *[]*models.Environment) {
+								RenderTempl(c, templates.EnvSessions(e, envs, []templates.BreadcrumbItem{
+									{
+										Name:   "Environments",
+										Active: false,
+										Href:   "/app",
+									},
+									{
+										Name:   e.Name,
+										Active: true,
+									},
+								}))
+							},
+						)
 					},
 				)
 			return nil

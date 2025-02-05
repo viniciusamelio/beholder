@@ -1,0 +1,29 @@
+package templates
+
+import "beholder-api/internal/application/models"
+
+type BreadcrumbItem struct {
+    Name string
+    Href string
+    Active bool
+}
+
+templ Dashboard(breadcrumbItems []BreadcrumbItem, envs *[]*models.Environment) {
+    <div class="flex flex-row light">
+        @Sidebar(envs)
+        <div class="flex flex-col w-full">
+            <div class="max-w px-6 py-2 bg-card border-b border-border">
+                <ul class="uk-breadcrumb text-sm">
+                    for index, value := range breadcrumbItems{
+                        if index == len(breadcrumbItems) -1 {
+                            <li><span>{value.Name}</span></li>
+                        }else {
+                            <li><a href={templ.SafeURL(string(value.Href))}>{value.Name}</a></li>
+                        }
+                    }
+                </ul>
+            </div>
+            {children...}
+        </div>
+    </div>
+}

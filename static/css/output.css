@@ -446,6 +446,61 @@ video {
   display: none;
 }
 
+:root {
+  --background: 240 21% 15%;
+  --foreground: 226 64% 88%;
+  --muted: 240 12% 19%;
+  --muted-foreground: 240 12% 69%;
+  --popover: 240 21% 12%;
+  --popover-foreground: 226 64% 98%;
+  --card: 240 21% 13%;
+  --card-foreground: 226 64% 93%;
+  --border: 240 11% 20%;
+  --input: 240 11% 23%;
+  --primary: 267 84% 81%;
+  --primary-foreground: 267 84% 21%;
+  --secondary: 267 30% 25%;
+  --secondary-foreground: 267 30% 85%;
+  --accent: 240 21% 30%;
+  --accent-foreground: 240 21% 90%;
+  --destructive: 8 96% 56%;
+  --destructive-foreground: 0 0% 100%;
+  --ring: 267 84% 81%;
+  --chart-1: 267 84% 81%;
+  --chart-2: 267 30% 25%;
+  --chart-3: 240 21% 30%;
+  --chart-4: 267 30% 28%;
+  --chart-5: 267 87% 81%;
+  --radius: 0.75rem;
+}
+
+.dark {
+  --background: 240 21% 15%;
+  --foreground: 226 64% 88%;
+  --muted: 240 12% 19%;
+  --muted-foreground: 240 12% 69%;
+  --popover: 240 21% 12%;
+  --popover-foreground: 226 64% 98%;
+  --card: 240 21% 13%;
+  --card-foreground: 226 64% 93%;
+  --border: 240 11% 20%;
+  --input: 240 11% 23%;
+  --primary: 267 84% 81%;
+  --primary-foreground: 267 84% 21%;
+  --secondary: 267 30% 25%;
+  --secondary-foreground: 267 30% 85%;
+  --accent: 240 21% 30%;
+  --accent-foreground: 240 21% 90%;
+  --destructive: 8 96% 56%;
+  --destructive-foreground: 0 0% 100%;
+  --ring: 267 84% 81%;
+  --chart-1: 267 84% 81%;
+  --chart-2: 267 30% 25%;
+  --chart-3: 240 21% 30%;
+  --chart-4: 267 30% 28%;
+  --chart-5: 267 87% 81%;
+}
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -579,6 +634,10 @@ video {
   margin-right: 0.5rem;
 }
 
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
 .mt-4 {
   margin-top: 1rem;
 }
@@ -589,6 +648,10 @@ video {
 
 .flex {
   display: flex;
+}
+
+.grid {
+  display: grid;
 }
 
 .h-2 {
@@ -625,6 +688,10 @@ video {
 
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+}
+
+.grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
 .flex-row {
@@ -703,20 +770,12 @@ video {
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
-.p-4 {
-  padding: 1rem;
-}
-
-.p-2 {
-  padding: 0.5rem;
-}
-
-.p-6 {
-  padding: 1.5rem;
-}
-
 .p-3 {
   padding: 0.75rem;
+}
+
+.p-4 {
+  padding: 1rem;
 }
 
 .px-2 {
@@ -786,6 +845,10 @@ video {
   font-weight: 600;
 }
 
+.font-thin {
+  font-weight: 100;
+}
+
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
@@ -813,29 +876,6 @@ video {
   transition-duration: 150ms;
 }
 
-.dark {
-  --gradient: linear-gradient(to top left, #7F00FF, #E100FF);
-  --background: 287 65% 4%;
-  --foreground: 287 10% 97.5%;
-  --muted: 287 50% 15%;
-  --muted-foreground: 287 10% 55%;
-  --popover: 287 45% 6.5%;
-  --popover-foreground: 287 10% 97.5%;
-  --card: 287 45% 6.5%;
-  --card-foreground: 287 10% 97.5%;
-  --border: 287 50% 15%;
-  --input: 287 50% 15%;
-  --primary: 287 100% 50%;
-  --primary-foreground: 287 10% 5%;
-  --secondary: 287 50% 15%;
-  --secondary-foreground: 287 10% 97.5%;
-  --accent: 287 50% 15%;
-  --accent-foreground: 287 10% 97.5%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 287 10% 97.5%;
-  --ring: 287 100% 50%;
-}
-
 @keyframes pulse {
   50% {
     opacity: .5;
@@ -845,3 +885,10 @@ video {
 .hover\:animate-pulse:hover {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+  
