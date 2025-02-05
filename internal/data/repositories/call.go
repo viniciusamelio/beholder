@@ -33,31 +33,54 @@ func (er *CallRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.
 		Fetch(
 			with.Call.Session(),
 			with.Call.Session().Env(),
+			with.Call.Env(),
 		).
 		All(context.Background())
 	if err != nil {
 		return utils.NewLeft[utils.Failure, *[]*models.Call](utils.NewUnknownFailure(err.Error(), nil))
 	}
-	return utils.NewRight[utils.Failure, *[]*models.Call](&calls)
+	return utils.NewRight[utils.Failure](&calls)
 }
 
 func (er *CallRepository) Create(call models.Call) utils.Either[utils.Failure, *models.Call] {
+
+	if call.EnvUID == nil && call.SessionUID == nil {
+		code := 400
+		return utils.NewLeft[utils.Failure, *models.Call](utils.NewUnknownFailure("env_uid or session_uid is required", &code))
+	}
+
 	now := time.Now()
 	call.CreatedAt = &now
 	call.Name = slug.Make(call.Name)
 	call.UID = utils.GenSnowflakeID()
 
-	session, err := er.ds.Session().Query().Filter(
-		where.Session.UID.Equal(*call.SessionUID),
-	).First(context.Background())
+	if call.SessionUID != nil {
+		session, err := er.ds.Session().Query().Filter(
+			where.Session.UID.Equal(*call.SessionUID),
+		).First(context.Background())
 
-	if err != nil {
-		code := 404
-		return utils.NewLeft[utils.Failure, *models.Call](utils.NewUnknownFailure("session not found", &code))
+		if err != nil {
+			code := 404
+			return utils.NewLeft[utils.Failure, *models.Call](utils.NewUnknownFailure("session not found", &code))
+		}
+
+		call.Session = session
 	}
 
-	call.Session = session
-	err = er.ds.Call().Create(context.Background(), &call)
+	if call.EnvUID != nil {
+		env, err := er.ds.Environment().Query().Filter(
+			where.Environment.UID.Equal(*call.EnvUID),
+		).First(context.Background())
+
+		if err != nil {
+			code := 404
+			return utils.NewLeft[utils.Failure, *models.Call](utils.NewUnknownFailure("env not found", &code))
+		}
+
+		call.Env = env
+	}
+
+	err := er.ds.Call().Create(context.Background(), &call)
 	if err != nil {
 		return utils.NewLeft[utils.Failure, *models.Call](utils.NewUnknownFailure(err.Error(), nil))
 	}

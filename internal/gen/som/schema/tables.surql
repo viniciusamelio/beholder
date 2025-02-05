@@ -31,6 +31,7 @@ DEFINE FIELD sessions.* ON TABLE environment TYPE option<record<session> | null>
 
 DEFINE TABLE call SCHEMAFULL TYPE NORMAL PERMISSIONS FULL;
 DEFINE FIELD uid ON TABLE call TYPE int ASSERT $value >= -9223372036854775808 AND $value <= 9223372036854775807;
+DEFINE FIELD env_uid ON TABLE call TYPE option<int | null> ASSERT $value == NONE OR $value == NULL OR $value >= -9223372036854775808 AND $value <= 9223372036854775807;
 DEFINE FIELD session_uid ON TABLE call TYPE option<int | null> ASSERT $value == NONE OR $value == NULL OR $value >= -9223372036854775808 AND $value <= 9223372036854775807;
 DEFINE FIELD name ON TABLE call TYPE string;
 DEFINE FIELD path ON TABLE call TYPE option<string | null>;
@@ -41,3 +42,4 @@ DEFINE FIELD method ON TABLE call TYPE string;
 DEFINE FIELD called_at ON TABLE call TYPE datetime;
 DEFINE FIELD created_at ON TABLE call TYPE option<datetime | null>;
 DEFINE FIELD session ON TABLE call TYPE option<record<session> | null>;
+DEFINE FIELD env ON TABLE call TYPE option<record<environment> | null>;

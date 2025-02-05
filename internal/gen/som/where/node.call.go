@@ -13,6 +13,7 @@ func newCall[M any](key lib.Key[M]) call[M] {
 		Body:        lib.NewStringPtr[M](lib.Field(key, "body")),
 		CalledAt:    lib.NewTime[M](lib.Field(key, "called_at")),
 		CreatedAt:   lib.NewTimePtr[M](lib.Field(key, "created_at")),
+		EnvUID:      lib.NewIntPtr[M, *int](lib.Field(key, "env_uid")),
 		ID:          lib.NewID[M](lib.Field(key, "id"), "call"),
 		Key:         key,
 		Method:      lib.NewString[M](lib.Field(key, "method")),
@@ -29,6 +30,7 @@ type call[M any] struct {
 	lib.Key[M]
 	ID          *lib.ID[M]
 	UID         *lib.Int[M, int]
+	EnvUID      *lib.IntPtr[M, *int]
 	SessionUID  *lib.IntPtr[M, *int]
 	Name        *lib.String[M]
 	Path        *lib.StringPtr[M]
@@ -42,6 +44,10 @@ type call[M any] struct {
 
 func (n call[M]) Session() session[M] {
 	return newSession[M](lib.Field(n.Key, "session"))
+}
+
+func (n call[M]) Env() environment[M] {
+	return newEnvironment[M](lib.Field(n.Key, "env"))
 }
 
 type callEdges[M any] struct {

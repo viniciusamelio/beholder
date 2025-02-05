@@ -13,6 +13,7 @@ func newCall[M any](key string) call[M] {
 		Body:        lib.NewStringSort[M](keyed(key, "body")),
 		CalledAt:    lib.NewBaseSort[M](keyed(key, "called_at")),
 		CreatedAt:   lib.NewBaseSort[M](keyed(key, "created_at")),
+		EnvUID:      lib.NewBaseSort[M](keyed(key, "env_uid")),
 		ID:          lib.NewBaseSort[M](keyed(key, "id")),
 		Method:      lib.NewStringSort[M](keyed(key, "method")),
 		Name:        lib.NewStringSort[M](keyed(key, "name")),
@@ -29,6 +30,7 @@ type call[M any] struct {
 	key         string
 	ID          *lib.BaseSort[M]
 	UID         *lib.BaseSort[M]
+	EnvUID      *lib.BaseSort[M]
 	SessionUID  *lib.BaseSort[M]
 	Name        *lib.StringSort[M]
 	Path        *lib.StringSort[M]
@@ -42,4 +44,8 @@ type call[M any] struct {
 
 func (n call[M]) Session() session[M] {
 	return newSession[M](keyed(n.key, "session"))
+}
+
+func (n call[M]) Env() environment[M] {
+	return newEnvironment[M](keyed(n.key, "env"))
 }

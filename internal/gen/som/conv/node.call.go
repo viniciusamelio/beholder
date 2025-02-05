@@ -9,18 +9,20 @@ import (
 )
 
 type Call struct {
-	ID          *som.ID        `cbor:"id,omitempty"`
-	UID         int            `cbor:"uid"`
-	SessionUID  *int           `cbor:"session_uid"`
-	Name        string         `cbor:"name"`
-	Path        *string        `cbor:"path"`
-	Body        *string        `cbor:"body"`
-	QueryParams *string        `cbor:"query_params"`
-	UserID      *string        `cbor:"user_id"`
-	Method      string         `cbor:"method"`
-	CalledAt    sdbc.DateTime  `cbor:"called_at"`
-	CreatedAt   *sdbc.DateTime `cbor:"created_at"`
-	Session     *sessionLink   `cbor:"session"`
+	ID          *som.ID          `cbor:"id,omitempty"`
+	UID         int              `cbor:"uid"`
+	EnvUID      *int             `cbor:"env_uid"`
+	SessionUID  *int             `cbor:"session_uid"`
+	Name        string           `cbor:"name"`
+	Path        *string          `cbor:"path"`
+	Body        *string          `cbor:"body"`
+	QueryParams *string          `cbor:"query_params"`
+	UserID      *string          `cbor:"user_id"`
+	Method      string           `cbor:"method"`
+	CalledAt    sdbc.DateTime    `cbor:"called_at"`
+	CreatedAt   *sdbc.DateTime   `cbor:"created_at"`
+	Session     *sessionLink     `cbor:"session"`
+	Env         *environmentLink `cbor:"env"`
 }
 
 func FromCall(data models.Call) Call {
@@ -28,6 +30,8 @@ func FromCall(data models.Call) Call {
 		Body:        data.Body,
 		CalledAt:    fromTime(data.CalledAt),
 		CreatedAt:   fromTimePtr(data.CreatedAt),
+		Env:         toEnvironmentLinkPtr(data.Env),
+		EnvUID:      data.EnvUID,
 		Method:      data.Method,
 		Name:        data.Name,
 		Path:        data.Path,
@@ -46,6 +50,8 @@ func FromCallPtr(data *models.Call) *Call {
 		Body:        data.Body,
 		CalledAt:    fromTime(data.CalledAt),
 		CreatedAt:   fromTimePtr(data.CreatedAt),
+		Env:         toEnvironmentLinkPtr(data.Env),
+		EnvUID:      data.EnvUID,
 		Method:      data.Method,
 		Name:        data.Name,
 		Path:        data.Path,
@@ -62,6 +68,8 @@ func ToCall(data Call) models.Call {
 		Body:        data.Body,
 		CalledAt:    toTime(data.CalledAt),
 		CreatedAt:   toTimePtr(data.CreatedAt),
+		Env:         fromEnvironmentLinkPtr(data.Env),
+		EnvUID:      data.EnvUID,
 		Method:      data.Method,
 		Name:        data.Name,
 		Node:        som.NewNode(data.ID),
@@ -81,6 +89,8 @@ func ToCallPtr(data *Call) *models.Call {
 		Body:        data.Body,
 		CalledAt:    toTime(data.CalledAt),
 		CreatedAt:   toTimePtr(data.CreatedAt),
+		Env:         fromEnvironmentLinkPtr(data.Env),
+		EnvUID:      data.EnvUID,
 		Method:      data.Method,
 		Name:        data.Name,
 		Node:        som.NewNode(data.ID),

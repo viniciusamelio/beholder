@@ -9,6 +9,7 @@ import (
 type Call struct {
 	som.Node
 	UID         int        `json:"uid" som:"uid"`
+	EnvUID      *int       `json:"env_uid" som:"env_uid"`
 	SessionUID  *int       `json:"session_uid" som:"session_uid"`
 	Name        string     `json:"name" som:"name"`
 	Path        *string    `json:"path" som:"path"`
@@ -19,5 +20,6 @@ type Call struct {
 	CalledAt    time.Time  `json:"called_at" som:"called_at"`
 	CreatedAt   *time.Time `json:"created_at" som:"created_at"`
 
-	Session *Session `json:"session" som:"->session"`
+	Session *Session     `json:"session" som:"->session"`
+	Env     *Environment `json:"env" som:"->environment"`
 }

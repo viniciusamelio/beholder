@@ -34,4 +34,6 @@
     --destructive-foreground: 287 10% 97.5%;
 
     --ring: 287 100% 50%;
+
+    --radius: 0.75rem;
 }
