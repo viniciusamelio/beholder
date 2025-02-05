@@ -12,7 +12,7 @@ func Router(envRepo *repositories.EnvironmentRepository, sessionRepo *repositori
 	EnvironmentRoutes(r, *envRepo)
 	SessionRouter(r, *sessionRepo, taskService)
 	CallRouter(r, *callRepo)
-	FrontendRouter(r, *envRepo)
+	FrontendRouter(r, *envRepo, *sessionRepo)
 	r.GET("/health", func(c echo.Context) error {
 		return c.String(200, "OK")
 	})

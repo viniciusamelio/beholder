@@ -1,0 +1,25 @@
+package templates
+
+import "beholder-api/internal/application/models"
+import "fmt"
+
+templ EnvSessions(env *models.Environment) {
+@Wrapper(){
+<div class="flex flex-row gap-2 light">
+    <section class="px-6 py-4 flex flex-col gap-2 w-full">
+        <ul class="uk-breadcrumb">
+            <li><a href="/app"><uk-icon class="mr-2" icon="folders"></uk-icon>Projects</a></li>
+            <li><span>{env.Name}</span></li>
+        </ul>
+        
+        <ul>
+            for _,session := range *env.Sessions {
+                <li class="text-foreground">
+                    { string(fmt.Sprintf("%s", session.CreatedAt)) }
+                </li>
+            }
+        </ul>
+    </section>
+</div>
+}
+}

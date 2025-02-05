@@ -9,13 +9,14 @@ import (
 )
 
 type Environment struct {
-	ID        *som.ID        `cbor:"id,omitempty"`
-	UID       int            `cbor:"uid"`
-	Name      string         `cbor:"name"`
-	Tags      []string       `cbor:"tags"`
-	BaseUrl   string         `cbor:"base_url"`
-	CreatedAt *sdbc.DateTime `cbor:"created_at"`
-	UpdatedAt *sdbc.DateTime `cbor:"updated_at"`
+	ID        *som.ID         `cbor:"id,omitempty"`
+	UID       int             `cbor:"uid"`
+	Name      string          `cbor:"name"`
+	Tags      []string        `cbor:"tags"`
+	BaseUrl   string          `cbor:"base_url"`
+	CreatedAt *sdbc.DateTime  `cbor:"created_at"`
+	UpdatedAt *sdbc.DateTime  `cbor:"updated_at"`
+	Sessions  *[]*sessionLink `cbor:"sessions"`
 }
 
 func FromEnvironment(data models.Environment) Environment {
@@ -23,6 +24,7 @@ func FromEnvironment(data models.Environment) Environment {
 		BaseUrl:   data.BaseUrl,
 		CreatedAt: fromTimePtr(data.CreatedAt),
 		Name:      data.Name,
+		Sessions:  mapSliceFnPtr(toSessionLinkPtr)(data.Sessions),
 		Tags:      data.Tags,
 		UID:       data.UID,
 		UpdatedAt: fromTimePtr(data.UpdatedAt),
@@ -36,6 +38,7 @@ func FromEnvironmentPtr(data *models.Environment) *Environment {
 		BaseUrl:   data.BaseUrl,
 		CreatedAt: fromTimePtr(data.CreatedAt),
 		Name:      data.Name,
+		Sessions:  mapSliceFnPtr(toSessionLinkPtr)(data.Sessions),
 		Tags:      data.Tags,
 		UID:       data.UID,
 		UpdatedAt: fromTimePtr(data.UpdatedAt),
@@ -48,6 +51,7 @@ func ToEnvironment(data Environment) models.Environment {
 		CreatedAt: toTimePtr(data.CreatedAt),
 		Name:      data.Name,
 		Node:      som.NewNode(data.ID),
+		Sessions:  mapSliceFnPtr(fromSessionLinkPtr)(data.Sessions),
 		Tags:      data.Tags,
 		UID:       data.UID,
 		UpdatedAt: toTimePtr(data.UpdatedAt),
@@ -62,6 +66,7 @@ func ToEnvironmentPtr(data *Environment) *models.Environment {
 		CreatedAt: toTimePtr(data.CreatedAt),
 		Name:      data.Name,
 		Node:      som.NewNode(data.ID),
+		Sessions:  mapSliceFnPtr(fromSessionLinkPtr)(data.Sessions),
 		Tags:      data.Tags,
 		UID:       data.UID,
 		UpdatedAt: toTimePtr(data.UpdatedAt),

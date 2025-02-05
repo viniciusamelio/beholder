@@ -79,6 +79,20 @@ func (sr *SessionRepository) Get(pagination dtos.PaginationDto) utils.Either[uti
 	return utils.NewRight[utils.Failure](&sessions)
 }
 
+func (sr *SessionRepository) GetByEnv(envUID int, pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Session] {
+	sessions, err := sr.ds.Session().Query().Filter(where.Session.EnvUID.Equal(envUID)).
+		Limit(int(pagination.Take.Int64)).
+		Offset(int(pagination.Skip.Int64)).
+		Fetch(with.Session.Env()).
+		All(context.Background())
+	if err != nil {
+		code := 400
+		return utils.NewLeft[utils.Failure, *[]*models.Session](utils.NewUnknownFailure("failed to get sessions", &code))
+	}
+
+	return utils.NewRight[utils.Failure](&sessions)
+}
+
 func (sr *SessionRepository) Delete(id int) utils.Either[utils.Failure, bool] {
 	foundSessionOrFailure := sr.GetByID(id)
 	var result utils.Either[utils.Failure, bool]

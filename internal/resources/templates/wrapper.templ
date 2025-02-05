@@ -9,6 +9,10 @@ templ Wrapper() {
     <title>Beholder</title>
     <link href="/static/css/output.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://unpkg.com/franken-ui@2.0.0-internal.40/dist/css/core.min.css" />
+    <link  rel="stylesheet" href="https://unpkg.com/franken-ui@2.0.0-internal.40/dist/css/utilities.min.css" />
+    <script src="https://unpkg.com/franken-ui@2.0.0-internal.40/dist/js/core.iife.js" type="module"></script>
+    <script src="https://unpkg.com/franken-ui@2.0.0-internal.40/dist/js/icon.iife.js" type="module" ></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -57,7 +61,7 @@ templ Wrapper() {
     </style>
 </head>
 
-<body class="bg-gray-50 dark">
+<body class="dark bg-background">
     {children...}
 </body>
 

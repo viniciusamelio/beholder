@@ -26,6 +26,8 @@ DEFINE FIELD tags.* ON TABLE environment TYPE string;
 DEFINE FIELD base_url ON TABLE environment TYPE string;
 DEFINE FIELD created_at ON TABLE environment TYPE option<datetime | null>;
 DEFINE FIELD updated_at ON TABLE environment TYPE option<datetime | null>;
+DEFINE FIELD sessions ON TABLE environment TYPE option<array | null>;
+DEFINE FIELD sessions.* ON TABLE environment TYPE option<record<session> | null>;
 
 DEFINE TABLE call SCHEMAFULL TYPE NORMAL PERMISSIONS FULL;
 DEFINE FIELD uid ON TABLE call TYPE int ASSERT $value >= -9223372036854775808 AND $value <= 9223372036854775807;

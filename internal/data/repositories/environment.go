@@ -33,6 +33,29 @@ func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either
 	return utils.NewRight[utils.Failure](&foundItems)
 }
 
+func (er *EnvironmentRepository) GetDetailed(id int, pagination dtos.PaginationDto) utils.Either[utils.Failure, *models.Environment] {
+	context := context.Background()
+	foundItem, err := er.ds.Environment().
+		Query().
+		Filter(where.Environment.UID.Equal(id)).
+		First(context)
+	if err != nil {
+		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
+	}
+	sessions, err := er.ds.Session().
+		Query().
+		Filter(where.Session.EnvUID.Equal(id)).
+		Limit(int(pagination.Take.Int64)).
+		Offset(int(pagination.Skip.Int64)).
+		Order().
+		All(context)
+	if err != nil {
+		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
+	}
+	foundItem.Sessions = &sessions
+	return utils.NewRight[utils.Failure](foundItem)
+}
+
 func (er *EnvironmentRepository) Create(env models.Environment) utils.Either[utils.Failure, *models.Environment] {
 	now := time.Now()
 	env.CreatedAt = &now

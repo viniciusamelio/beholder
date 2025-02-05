@@ -32,6 +32,11 @@ type environment[M any] struct {
 	UpdatedAt *lib.TimePtr[M]
 }
 
+func (n environment[M]) Sessions(filters ...lib.Filter[models.Session]) *lib.Slice[M, models.Session, session[M]] {
+	key := lib.Node(n.Key, "sessions", filters)
+	return lib.NewSlice[M, models.Session, session[M]](key, newSession[M])
+}
+
 type environmentEdges[M any] struct {
 	lib.Filter[M]
 	lib.Key[M]

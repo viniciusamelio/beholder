@@ -14,4 +14,6 @@ type Environment struct {
 	BaseUrl   string     `json:"base_url" som:"base_url"`
 	CreatedAt *time.Time `json:"created_at" som:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at" som:"updated_at"`
+
+	Sessions *[]*Session `json:"sessions" som:"->session.environment"`
 }

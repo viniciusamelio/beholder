@@ -3,24 +3,24 @@ package templates
 import "beholder-api/internal/application/models"
 
 templ Sidebar(envs *[]*models.Environment) {
-<aside class="sidebar w-64 h-screen bg-white border-r border-gray-200 flex flex-col">
-    <div class="p-4 border-b border-gray-200">
+<aside class="sidebar w-64 h-screen bg-card border-r border-border flex flex-col text-foreground">
+    <div class="p-4 border-b border-border">
         <div class="dropdown w-full">
-            <button class="w-full px-3 py-2 text-sm text-left rounded-lg hover:bg-gray-100 flex items-center">
+            <button class="w-full px-3 py-2 text-sm text-left rounded-lg hover:bg-secondary flex items-center">
                 <i class="ri-command-line mr-2"></i>
                 Acme Inc
                 <i class="ri-arrow-down-s-line ml-auto"></i>
             </button>
-            <div class="dropdown-content">
-                <div class="py-1">
-                    <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Pokedex</a>
-                    <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">Budget app</a>
-                    <div class="border-t border-gray-200 my-1"></div>
-                    <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
-                        <i class="ri-add-line mr-2"></i> Create application
-                    </a>
-                </div>
-            </div>
+            // <div class="dropdown-content border-none outline-none">
+                // <div class="py-1 bg-secondary border-none text-card-foreground">
+                    // <a href="#" class="block px-4 py-2 text-sm bg-secondary hover:bg-card">Pokedex</a>
+                    // <a href="#" class="block px-4 py-2 text-sm bg-secondary hover:bg-card">Budget app</a>
+                    // <div class="border-t border-border my-1"></div>
+                    // <a href="#" class="block px-4 py-2 text-sm bg-secondary hover:bg-card">
+                        // <i class="ri-add-line mr-2"></i> Create application
+                        // </a>
+                    // </div>
+                // </div>
         </div>
     </div>
 
@@ -34,14 +34,14 @@ templ Sidebar(envs *[]*models.Environment) {
                     <a href="#" class="sidebar-item flex items-center text-sm px-3 py-2 rounded-lg">
                         <i class="ri-folders-line mr-2"></i>
                         Calls
-                        // <span
-                        //     class="ml-auto bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full">9</span>
+                        // <span //
+                            // class="ml-auto bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full">9</span>
                     </a>
                     <a href="#" class="sidebar-item flex items-center text-sm px-3 py-2 rounded-lg">
                         <i class="ri-history-line mr-2"></i>
                         Replay history
-                        // <span
-                        //     class="ml-auto bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full">9</span>
+                        // <span //
+                            // class="ml-auto bg-gray-100 text-gray-600 text-xs font-medium px-2 py-0.5 rounded-full">9</span>
                     </a>
                 </div>
             </div>
@@ -51,45 +51,30 @@ templ Sidebar(envs *[]*models.Environment) {
                 <div class="space-y-1">
                     <ul>
                         for _,env := range *envs{
-                            <li>
-                                <a href={"/env/"+templ.SafeURL(env.UID)} class="sidebar-item flex items-center text-sm px-3 py-2 rounded-lg">
-                                    <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
-                                    {env.Name}
-                                </a>
-                            </li>
+                        <li>
+                            <a href={"/env/"+templ.SafeURL(env.UID)}
+                                class="sidebar-item flex items-center text-sm px-3 py-2 rounded-lg">
+                                <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
+                                {env.Name}
+                            </a>
+                        </li>
                         }
-                    </ul>                    
+                    </ul>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Sidebar Footer -->
-    <div class="border-t border-gray-200 p-4">
-        <div class="dropdown w-full">
-            <button class="w-full flex items-center space-x-3">
-                <img src="https://ui-avatars.com/api/?name=John+Doe" class="w-8 h-8 rounded-full">
-                <div class="flex-1 text-left">
-                    <div class="text-sm font-medium">John Doe</div>
-                    <div class="text-xs text-gray-500">john@example.com</div>
-                </div>
-                <i class="ri-more-line"></i>
-            </button>
-            <div class="dropdown-content dropdown absolute bottom-0 left-[200px]">
-                <div class="py-1">
-                    <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
-                        <i class="ri-user-line mr-2"></i> Profile
-                    </a>
-                    <a href="#" class="block px-4 py-2 text-sm hover:bg-gray-100">
-                        <i class="ri-settings-line mr-2"></i> Settings
-                    </a>
-                    <div class="border-t border-gray-200 my-1"></div>
-                    <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                        <i class="ri-logout-box-line mr-2"></i> Log out
-                    </a>
-                </div>
+    <div class="border-t border-border p-4">
+        <button class="w-full flex items-center space-x-3">
+            <img src="https://ui-avatars.com/api/?name=John+Doe" class="w-8 h-8 rounded-full">
+            <div class="flex-1 text-left">
+                <div class="text-sm font-medium">John Doe</div>
+                <div class="text-xs text-gray-500">john@example.com</div>
             </div>
-        </div>
+            <i class="ri-more-line"></i>
+        </button>
     </div>
 </aside>
 }
