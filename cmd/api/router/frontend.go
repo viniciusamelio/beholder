@@ -5,6 +5,7 @@ import (
 	"beholder-api/internal/data/repositories"
 	"beholder-api/internal/dtos"
 	"beholder-api/internal/resources/templates"
+	"beholder-api/internal/resources/views"
 	"beholder-api/internal/utils"
 	"fmt"
 	"strconv"
@@ -24,8 +25,8 @@ func FrontendRouter(e *echo.Echo, envRepo repositories.EnvironmentRepository, se
 					ErrorResponse(c, *f.Code(), f.Message())
 				},
 				func(e *[]*models.Environment) {
-					RenderTempl(c, templates.Home(e, []templates.BreadcrumbItem{
-						templates.BreadcrumbItem{
+					RenderTempl(c, views.Home(e, []templates.BreadcrumbItem{
+						{
 							Name:   "Environments",
 							Active: true,
 						},
@@ -53,7 +54,7 @@ func FrontendRouter(e *echo.Echo, envRepo repositories.EnvironmentRepository, se
 								ErrorResponse(c, *f.Code(), f.Message())
 							},
 							func(envs *[]*models.Environment) {
-								RenderTempl(c, templates.EnvSessions(e, envs, []templates.BreadcrumbItem{
+								RenderTempl(c, views.EnvSessions(e, envs, []templates.BreadcrumbItem{
 									{
 										Name:   "Environments",
 										Active: false,

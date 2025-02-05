@@ -1,17 +1,13 @@
-package templates
+package views
 
 import "beholder-api/internal/application/models"
+import "beholder-api/internal/resources/templates"
 import "fmt"
 
-templ EnvSessions(env *models.Environment, envs *[]*models.Environment, breadcrumb []BreadcrumbItem) {
-@Wrapper(){
-@Dashboard(breadcrumb, envs){
+templ EnvSessions(env *models.Environment, envs *[]*models.Environment, breadcrumb []templates.BreadcrumbItem) {
+@templates.Wrapper(){
+@templates.Dashboard(breadcrumb, envs){
 <section class="px-6 py-4 flex flex-col gap-2 w-full">
-    <ul class="uk-tab mt-2" data-uk-tab>
-        <li class="uk-active"><a href="#">Sessions</a></li>
-        <li><a href="#">Calls</a></li>
-    </ul>
-
     <ul class="grid grid-cols-1 lg:grid-cols-3 gap-2 mt-4">
         for _,session := range *env.Sessions {
         <li>

@@ -1,6 +1,0 @@
-<section class=\"px-6 py-4 flex flex-col gap-2 w-full\"><ul class=\"uk-tab mt-2\" data-uk-tab><li class=\"uk-active\"><a href=\"#\">Sessions</a></li><li><a href=\"#\">Calls</a></li></ul><ul class=\"grid grid-cols-1 lg:grid-cols-3 gap-2 mt-4\">
-<li><div class=\"uk-card uk-card-body max-w\"><div class=\"uk-card-header\"><h3 class=\"uk-card-title text-primary\"><span class=\"text-muted-foreground font-thin\">Session</span> # 
-</h3></div><div class=\"uk-card-body\"><p class=\"mt-2 text-muted-foreground flex flex-row gap-2 items-center\"><uk-icon icon=\"user\"></uk-icon> 
-</p></div><div class=\"uk-card-footer border-t border-border flex flex-row gap-2 items-center text-muted-foreground\"><uk-icon class=\"mt-2\" icon=\"clock\"></uk-icon><p class=\"mt-2\">
-</p></div></div></li>
-</ul></section>

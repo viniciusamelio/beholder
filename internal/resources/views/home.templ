@@ -1,11 +1,13 @@
-package templates
+package views
 
 import "beholder-api/internal/application/models"
+import "beholder-api/internal/resources/templates"
 import "fmt"
 
-templ Home(envs *[]*models.Environment, breadcrumb []BreadcrumbItem) {
-    @Wrapper() {
-        @Dashboard(breadcrumb, envs) {
+
+templ Home(envs *[]*models.Environment, breadcrumb []templates.BreadcrumbItem) {
+    @templates.Wrapper() {
+        @templates.Dashboard(breadcrumb, envs) {
             <section class="px-6 py-4 flex flex-col gap-2 w-full">
                 for _,env := range *envs {
                 <a href={templ.SafeURL(string(fmt.Sprintf("/app/env/%d/sessions", env.UID)))}

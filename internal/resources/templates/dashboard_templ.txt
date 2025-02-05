@@ -1,9 +1,0 @@
-<div class=\"flex flex-row light\">
-<div class=\"flex flex-col w-full\"><div class=\"max-w px-6 py-2 bg-card border-b border-border\"><ul class=\"uk-breadcrumb text-sm\">
-<li><span>
-</span></li>
-<li><a href=\"
-\">
-</a></li>
-</ul></div>
-</div></div>
