@@ -1,7 +1,11 @@
 dev:
 	air
+up:
+	goose up
+down:
+	goose down
 schema:
-	go run github.com/go-surreal/som/cmd/som@latest gen internal/application/models internal/gen/som
+	jet --source=sqlite -dsn=./beholder.db -schema=dvds -path=./internal/jet
 tailwind:
 	tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch
 templ:

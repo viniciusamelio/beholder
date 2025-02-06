@@ -5,9 +5,9 @@ POST {{BASE}}/environment
 Content-Type: application/json
 
 {
-    "name" : "dev",
-    "tags" : ["dev", "ambiente de dev"],
-    "base_url" : "https://dev.viniciusamelio.com/"
+    "name" : "prod",
+    "tags" : ["prod", "production", "production env"],
+    "base_url" : "https://viniciusamelio.com/"
 }
 
 ### Update env

@@ -6,7 +6,6 @@ import (
 	"beholder-api/internal/services"
 	"beholder-api/internal/services/providers"
 
-	_ "github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"go.uber.org/fx"
 )
@@ -18,6 +17,7 @@ func main() {
 	fx.New(
 		fx.Provide(
 			services.NewSomDatasource,
+			services.InitSqlite,
 			repositories.NewCallRepository,
 			repositories.NewEnvironmentRepository,
 			repositories.NewSessionRepository,

@@ -4,19 +4,23 @@ import (
 	"beholder-api/internal/application/models"
 	"beholder-api/internal/dtos"
 	"beholder-api/internal/gen/som/where"
+	"beholder-api/internal/jet/model"
+	"beholder-api/internal/jet/table"
 	"beholder-api/internal/services"
 	"beholder-api/internal/utils"
 	"context"
+	"database/sql"
 	"time"
 )
 
 type EnvironmentRepository struct {
 	ds        services.SomDatasource
+	db        *sql.DB
 	tableName string
 }
 
-func NewEnvironmentRepository(ds *services.SomDatasource) *EnvironmentRepository {
-	return &EnvironmentRepository{ds: *ds, tableName: "environment"}
+func NewEnvironmentRepository(ds *services.SomDatasource, db *sql.DB) *EnvironmentRepository {
+	return &EnvironmentRepository{ds: *ds, tableName: "environment", db: db}
 }
 
 func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Environment] {
@@ -56,15 +60,25 @@ func (er *EnvironmentRepository) GetDetailed(id int, pagination dtos.PaginationD
 	return utils.NewRight[utils.Failure](foundItem)
 }
 
-func (er *EnvironmentRepository) Create(env models.Environment) utils.Either[utils.Failure, *models.Environment] {
-	now := time.Now()
-	env.CreatedAt = &now
-	env.UID = utils.GenSnowflakeID()
-	err := er.ds.Environment().Create(context.Background(), &env)
+func (er *EnvironmentRepository) Create(env model.Environments) utils.Either[utils.Failure, *model.Environments] {
+	envModel := model.Environments{}
+
+	err := table.Environments.INSERT(
+		table.Environments.ID,
+		table.Environments.Name,
+		table.Environments.Description,
+		table.Environments.Tags,
+		table.Environments.BaseURL,
+	).VALUES(utils.GenSnowflakeID(), env.Name, "Something cool", env.Tags, env.BaseURL).
+		RETURNING(table.Environments.AllColumns).
+		Query(er.db, &envModel)
+
 	if err != nil {
-		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
+		status := 400
+		return utils.NewLeft[utils.Failure, *model.Environments](utils.NewUnknownFailure(err.Error(), &status))
 	}
-	return utils.NewRight[utils.Failure](&env)
+	return utils.NewRight[utils.Failure](&envModel)
+
 }
 
 func (er *EnvironmentRepository) Update(ID int, env models.Environment) utils.Either[utils.Failure, *models.Environment] {
