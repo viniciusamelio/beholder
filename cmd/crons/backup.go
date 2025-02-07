@@ -9,7 +9,7 @@ import (
 )
 
 func BackupCron(c *cron.Cron, bucket bucket.Bucket) {
-	err := c.AddFunc("@every 5s", func() {
+	err := c.AddFunc("@every 1h", func() {
 		log.Default().Println("[BACKUP] JOB RUNNING 🔄")
 		exec.Command("sqlite3", "./beholder.db", ".backup backup.db").Output()
 		bucket.UploadFile("backup", "backup.db", "application/octet-stream")
