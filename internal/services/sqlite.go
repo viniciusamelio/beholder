@@ -11,5 +11,6 @@ func InitSqlite() *sql.DB {
 	if err != nil {
 		panic(err)
 	}
+	db.Exec("PRAGMA journal_mode = WAL; PRAGMA synchronous = normal; PRAGMA journal_size_limit = 6144000;")
 	return db
 }

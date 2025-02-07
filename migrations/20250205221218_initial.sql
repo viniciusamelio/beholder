@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-SELECT 'up SQL query';
+-- SELECT 'up SQL query';
 CREATE TABLE environments (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -38,7 +38,7 @@ CREATE TABLE calls(
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+-- SELECT 'down SQL query';
 DROP TABLE calls;
 DROP TABLE sessions;
 DROP TABLE environments;
