@@ -30,7 +30,7 @@ func main() {
 			services.InitSqlite,
 			repositories.NewEnvironmentRepository,
 			repositories.NewSessionRepository,
-			providers.NewCloudTasksProvider,
+			providers.NewHttpTasksProvider,
 			func() bucket.Bucket {
 				return r2
 			},

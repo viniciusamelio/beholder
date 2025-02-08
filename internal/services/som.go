@@ -26,10 +26,6 @@ func (s *SomDatasource) Session() som.SessionRepo {
 	return s.Client.SessionRepo()
 }
 
-func (s *SomDatasource) Call() som.CallRepo {
-	return s.Client.CallRepo()
-}
-
 func (s *SomDatasource) Response() som.ResponseRepo {
 	return s.Client.ResponseRepo()
 }

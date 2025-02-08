@@ -17,13 +17,11 @@ type Response struct {
 	Headers   *string        `cbor:"headers"`
 	CreatedAt *sdbc.DateTime `cbor:"created_at"`
 	SentAt    sdbc.DateTime  `cbor:"sent_at"`
-	Call      *callLink      `cbor:"call"`
 }
 
 func FromResponse(data models.Response) Response {
 	return Response{
 		Body:      data.Body,
-		Call:      toCallLinkPtr(data.Call),
 		CallUID:   data.CallUID,
 		CreatedAt: fromTimePtr(data.CreatedAt),
 		Headers:   data.Headers,
@@ -38,7 +36,6 @@ func FromResponsePtr(data *models.Response) *Response {
 	}
 	return &Response{
 		Body:      data.Body,
-		Call:      toCallLinkPtr(data.Call),
 		CallUID:   data.CallUID,
 		CreatedAt: fromTimePtr(data.CreatedAt),
 		Headers:   data.Headers,
@@ -51,7 +48,6 @@ func FromResponsePtr(data *models.Response) *Response {
 func ToResponse(data Response) models.Response {
 	return models.Response{
 		Body:      data.Body,
-		Call:      fromCallLinkPtr(data.Call),
 		CallUID:   data.CallUID,
 		CreatedAt: toTimePtr(data.CreatedAt),
 		Headers:   data.Headers,
@@ -67,7 +63,6 @@ func ToResponsePtr(data *Response) *models.Response {
 	}
 	return &models.Response{
 		Body:      data.Body,
-		Call:      fromCallLinkPtr(data.Call),
 		CallUID:   data.CallUID,
 		CreatedAt: toTimePtr(data.CreatedAt),
 		Headers:   data.Headers,

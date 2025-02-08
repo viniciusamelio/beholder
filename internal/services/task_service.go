@@ -1,7 +1,7 @@
 package services
 
-import "beholder-api/internal/application/models"
+import "beholder-api/internal/dtos"
 
 type TaskService interface {
-	Execute([]*models.Call) error
+	Execute(*dtos.GetCallsFromSessionResponseDto) error
 }

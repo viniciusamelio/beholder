@@ -1,7 +1,6 @@
 package router
 
 import (
-	"beholder-api/internal/application/models"
 	"beholder-api/internal/data/repositories"
 	"beholder-api/internal/dtos"
 	"beholder-api/internal/jet/model"
@@ -56,7 +55,7 @@ func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskServic
 			func(f utils.Failure) {
 				ErrorResponse(c, 400, f.Message())
 			},
-			func(c []*models.Call) {
+			func(c *dtos.GetCallsFromSessionResponseDto) {
 				taskService.Execute(c)
 			},
 		)

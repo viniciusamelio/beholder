@@ -1,7 +1,7 @@
 package providers
 
 import (
-	"beholder-api/internal/application/models"
+	"beholder-api/internal/dtos"
 	"beholder-api/internal/services"
 	"log"
 	"net/http"
@@ -11,18 +11,18 @@ import (
 
 type HttpTaskProvider struct{}
 
-func NewCloudTasksProvider() services.TaskService {
+func NewHttpTasksProvider() services.TaskService {
 	return &HttpTaskProvider{}
 }
 
-func (p *HttpTaskProvider) Execute(calls []*models.Call) error {
+func (p *HttpTaskProvider) Execute(i *dtos.GetCallsFromSessionResponseDto) error {
 	instance := axios.NewInstance(&axios.InstanceConfig{
-		BaseURL: calls[0].Session.Env.BaseUrl,
+		BaseURL: i.BaseURL,
 		Headers: http.Header{
 			"Content-Type": []string{"application/json"},
 		},
 	})
-	for _, v := range calls {
+	for _, v := range *i.Calls {
 		call := v
 		go func() {
 			instance.Request(&axios.Config{
