@@ -10,7 +10,11 @@ import (
 	"beholder-api/internal/utils"
 	"context"
 	"database/sql"
+	"strconv"
+	"strings"
 	"time"
+
+	"github.com/go-jet/jet/v2/sqlite"
 )
 
 type EnvironmentRepository struct {
@@ -81,24 +85,30 @@ func (er *EnvironmentRepository) Create(env model.Environments) utils.Either[uti
 
 }
 
-func (er *EnvironmentRepository) Update(ID int, env models.Environment) utils.Either[utils.Failure, *models.Environment] {
-	context := context.Background()
-	foundItem, err := er.ds.Environment().Query().Filter(
-		where.Environment.UID.Equal(
-			ID,
-		),
-	).First(context)
+func (er *EnvironmentRepository) Update(ID int, env models.Environment) utils.Either[utils.Failure, *model.Environments] {
+	dest := model.Environments{}
+	err := table.Environments.UPDATE(
+		table.Environments.Name,
+		table.Environments.Description,
+		table.Environments.BaseURL,
+		table.Environments.Tags,
+		table.Environments.UpdatedAt,
+	).SET(
+		&env.Name,
+		&env.Description,
+		&env.BaseUrl,
+		strings.Join(env.Tags, ", "),
+		time.Now(),
+	).
+		WHERE(
+			table.Environments.ID.EQ(sqlite.String(strconv.Itoa(ID))),
+		).
+		RETURNING(table.Environments.AllColumns).
+		Query(er.db, &dest)
+
 	if err != nil {
-		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
+		return utils.NewLeft[utils.Failure, *model.Environments](utils.NewUnknownFailure(err.Error(), nil))
 	}
-	now := time.Now()
-	foundItem.BaseUrl = env.BaseUrl
-	foundItem.Name = env.Name
-	foundItem.UpdatedAt = &now
-	foundItem.Tags = env.Tags
-	err = er.ds.Environment().Update(context, foundItem)
-	if err != nil {
-		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
-	}
-	return utils.NewRight[utils.Failure](foundItem)
+
+	return utils.NewRight[utils.Failure](&dest)
 }

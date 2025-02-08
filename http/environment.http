@@ -11,11 +11,12 @@ Content-Type: application/json
 }
 
 ### Update env
-PUT {{BASE}}/environment/2145670309036949504
+PUT {{BASE}}/environment/2150353345729003520
 Content-Type: application/json
 
 {
-    "name" : "homolog editado 3x",
+    "name" : "Meu env editadinho",
     "tags" : ["dev", "mvp"],
+    "description" : "Então pega essa descrição",
     "base_url" : "https://webhook.site/bae63b0a-0234-4cb1-8a06-d395c8871f0f"
 }

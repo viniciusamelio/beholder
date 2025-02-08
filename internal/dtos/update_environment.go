@@ -7,10 +7,11 @@ import (
 )
 
 type UpdateEnvironmentDto struct {
-	ID      int      `json:"id" query:"id" validate:"required"`
-	Name    string   `json:"name" validate:"required,min=3,max=100"`
-	BaseUrl string   `json:"base_url" validate:"required,min=3,max=100,url"`
-	Tags    []string `json:"tags" validate:"max=10"`
+	ID          int      `json:"id" query:"id" validate:"required"`
+	Name        string   `json:"name" validate:"required,min=3,max=100"`
+	Description *string  `json:"description" validate:"max=100"`
+	BaseUrl     string   `json:"base_url" validate:"required,min=3,max=100,url"`
+	Tags        []string `json:"tags" validate:"max=10"`
 }
 
 func (u UpdateEnvironmentDto) ToModel() models.Environment {
@@ -18,10 +19,11 @@ func (u UpdateEnvironmentDto) ToModel() models.Environment {
 		u.Tags[i] = slug.Make(v)
 	}
 	environment := models.Environment{
-		UID:     u.ID,
-		Name:    slug.Make(u.Name),
-		BaseUrl: u.BaseUrl,
-		Tags:    u.Tags,
+		UID:         u.ID,
+		Description: *u.Description,
+		Name:        slug.Make(u.Name),
+		BaseUrl:     u.BaseUrl,
+		Tags:        u.Tags,
 	}
 
 	return environment

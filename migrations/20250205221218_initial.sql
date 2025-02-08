@@ -1,11 +1,11 @@
 -- +goose Up
 -- +goose StatementBegin
--- SELECT 'up SQL query';
+SELECT 'up SQL query';
 CREATE TABLE environments (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    tags TEXT[],
+    tags TEXT,
     base_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
@@ -16,7 +16,7 @@ CREATE TABLE sessions (
     environment_id INTEGER REFERENCES environments(id),
     user_id TEXT,
     description TEXT,
-    tags TEXT[],
+    tags TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
@@ -38,7 +38,7 @@ CREATE TABLE calls(
 
 -- +goose Down
 -- +goose StatementBegin
--- SELECT 'down SQL query';
+SELECT 'down SQL query';
 DROP TABLE calls;
 DROP TABLE sessions;
 DROP TABLE environments;
