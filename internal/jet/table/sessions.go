@@ -18,9 +18,8 @@ type sessionsTable struct {
 
 	// Columns
 	ID            sqlite.ColumnString
-	EnvironmentID sqlite.ColumnInteger
+	EnvironmentID sqlite.ColumnString
 	UserID        sqlite.ColumnString
-	Description   sqlite.ColumnString
 	Tags          sqlite.ColumnString
 	CreatedAt     sqlite.ColumnTimestamp
 	UpdatedAt     sqlite.ColumnTimestamp
@@ -65,14 +64,13 @@ func newSessionsTable(schemaName, tableName, alias string) *SessionsTable {
 func newSessionsTableImpl(schemaName, tableName, alias string) sessionsTable {
 	var (
 		IDColumn            = sqlite.StringColumn("id")
-		EnvironmentIDColumn = sqlite.IntegerColumn("environment_id")
+		EnvironmentIDColumn = sqlite.StringColumn("environment_id")
 		UserIDColumn        = sqlite.StringColumn("user_id")
-		DescriptionColumn   = sqlite.StringColumn("description")
 		TagsColumn          = sqlite.StringColumn("tags")
 		CreatedAtColumn     = sqlite.TimestampColumn("created_at")
 		UpdatedAtColumn     = sqlite.TimestampColumn("updated_at")
-		allColumns          = sqlite.ColumnList{IDColumn, EnvironmentIDColumn, UserIDColumn, DescriptionColumn, TagsColumn, CreatedAtColumn, UpdatedAtColumn}
-		mutableColumns      = sqlite.ColumnList{EnvironmentIDColumn, UserIDColumn, DescriptionColumn, TagsColumn, CreatedAtColumn, UpdatedAtColumn}
+		allColumns          = sqlite.ColumnList{IDColumn, EnvironmentIDColumn, UserIDColumn, TagsColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns      = sqlite.ColumnList{EnvironmentIDColumn, UserIDColumn, TagsColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return sessionsTable{
@@ -82,7 +80,6 @@ func newSessionsTableImpl(schemaName, tableName, alias string) sessionsTable {
 		ID:            IDColumn,
 		EnvironmentID: EnvironmentIDColumn,
 		UserID:        UserIDColumn,
-		Description:   DescriptionColumn,
 		Tags:          TagsColumn,
 		CreatedAt:     CreatedAtColumn,
 		UpdatedAt:     UpdatedAtColumn,

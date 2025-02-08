@@ -5,46 +5,52 @@ import (
 	"beholder-api/internal/dtos"
 	"beholder-api/internal/gen/som/where"
 	"beholder-api/internal/gen/som/with"
+	"beholder-api/internal/jet/model"
+	"beholder-api/internal/jet/table"
 	"beholder-api/internal/services"
 	"beholder-api/internal/utils"
 	"context"
-	"time"
+	"database/sql"
+	"fmt"
 )
 
 type SessionRepository struct {
+	db        *sql.DB
 	ds        services.SomDatasource
 	tableName string
 }
 
-func NewSessionRepository(ds *services.SomDatasource) *SessionRepository {
+func NewSessionRepository(ds *services.SomDatasource, db *sql.DB) *SessionRepository {
 	return &SessionRepository{
 		ds:        *ds,
 		tableName: "session",
+		db:        db,
 	}
 }
 
-func (sr *SessionRepository) Create(session models.Session) utils.Either[utils.Failure, *models.Session] {
-	session.UID = utils.GenSnowflakeID()
-	now := time.Now()
-	session.CreatedAt = &now
-
-	env, err := sr.ds.Environment().Query().Filter(
-		where.Environment.UID.Equal(session.EnvUID),
-	).First(
-		context.Background(),
-	)
+func (sr *SessionRepository) Create(session model.Sessions) utils.Either[utils.Failure, *model.Sessions] {
+	dest := model.Sessions{}
+	err := table.Sessions.INSERT(
+		table.Sessions.ID,
+		table.Sessions.EnvironmentID,
+		table.Sessions.UserID,
+		table.Sessions.Tags,
+	).VALUES(
+		session.ID,
+		session.EnvironmentID,
+		session.UserID,
+		session.Tags,
+	).RETURNING(
+		table.Sessions.AllColumns,
+	).Query(sr.db, &dest)
 
 	if err != nil {
+		fmt.Print(err.Error())
 		code := 404
-		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("environment not found", &code))
+		return utils.NewLeft[utils.Failure, *model.Sessions](utils.NewUnknownFailure("environment not found", &code))
 	}
-	session.Env = env
-	err = sr.ds.Session().Create(context.Background(), &session)
-	if err != nil {
-		code := 400
-		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("failed to create session", &code))
-	}
-	return utils.NewRight[utils.Failure](&session)
+
+	return utils.NewRight[utils.Failure](&dest)
 }
 
 func (sr *SessionRepository) GetByID(id int) utils.Either[utils.Failure, *models.Session] {
@@ -63,20 +69,22 @@ func (sr *SessionRepository) GetByID(id int) utils.Either[utils.Failure, *models
 	return utils.NewRight[utils.Failure](found)
 }
 
-func (sr *SessionRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Session] {
-	sessions, err := sr.ds.Session().Query().
-		Limit(int(*pagination.Take.Ptr())).
-		Offset(int(pagination.Skip.Int64)).
-		Fetch(
-			with.Session.Env(),
-		).
-		All(context.Background())
+func (sr *SessionRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*model.Sessions] {
+	dest := []*model.Sessions{}
+
+	err := table.Sessions.SELECT(
+		table.Sessions.AllColumns,
+	).ORDER_BY(table.Sessions.EnvironmentID.DESC()).
+		OFFSET(pagination.Skip.Int64).
+		LIMIT(pagination.Take.Int64).
+		Query(sr.db, &dest)
+
 	if err != nil {
 		code := 400
-		return utils.NewLeft[utils.Failure, *[]*models.Session](utils.NewUnknownFailure("failed to get sessions", &code))
+		return utils.NewLeft[utils.Failure, *[]*model.Sessions](utils.NewUnknownFailure("failed to get sessions", &code))
 	}
 
-	return utils.NewRight[utils.Failure](&sessions)
+	return utils.NewRight[utils.Failure](&dest)
 }
 
 func (sr *SessionRepository) GetByEnv(envUID int, pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Session] {

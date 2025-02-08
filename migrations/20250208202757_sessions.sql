@@ -1,20 +1,17 @@
 -- +goose Up
 -- +goose StatementBegin
 SELECT 'up SQL query';
-CREATE TABLE environments (
+-- +goose StatementEnd
+CREATE TABLE sessions (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
+    environment_id SERIAL REFERENCES environments(id),
+    user_id TEXT,
     tags TEXT,
-    base_url VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
-
--- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
 SELECT 'down SQL query';
-DROP TABLE environments;
+DROP TABLE sessions;
 -- +goose StatementEnd

@@ -13,6 +13,7 @@ type Session struct {
 	UserID    string     `json:"user_id" som:"user_id"`
 	CreatedAt *time.Time `json:"created_at" som:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at" som:"updated_at"`
+	Tags      []string   `json:"tags"`
 
 	Env *Environment `json:"env" som:"->env"`
 }

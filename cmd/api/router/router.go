@@ -7,11 +7,10 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func Router(envRepo *repositories.EnvironmentRepository, sessionRepo *repositories.SessionRepository, callRepo *repositories.CallRepository, taskService services.TaskService) {
+func Router(envRepo *repositories.EnvironmentRepository, sessionRepo *repositories.SessionRepository, taskService services.TaskService) {
 	r := echo.New()
 	EnvironmentRoutes(r, *envRepo)
 	SessionRouter(r, *sessionRepo, taskService)
-	CallRouter(r, *callRepo)
 	FrontendRouter(r, *envRepo, *sessionRepo)
 	r.GET("/health", func(c echo.Context) error {
 		return c.String(200, "OK")

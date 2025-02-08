@@ -4,6 +4,7 @@ import (
 	"beholder-api/internal/application/models"
 	"beholder-api/internal/data/repositories"
 	"beholder-api/internal/dtos"
+	"beholder-api/internal/jet/model"
 	"beholder-api/internal/services"
 	"beholder-api/internal/utils"
 	"strconv"
@@ -20,7 +21,7 @@ func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskServic
 			func(f utils.Failure) {
 				ErrorResponse(c, 400, f.Message())
 			},
-			func(s *[]*models.Session) {
+			func(s *[]*model.Sessions) {
 				Response(c, 200, s)
 			},
 		)
@@ -37,7 +38,7 @@ func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskServic
 			func(f utils.Failure) {
 				ErrorResponse(c, 400, f.Message())
 			},
-			func(s *models.Session) {
+			func(s *model.Sessions) {
 				Response(c, 201, s)
 			},
 		)

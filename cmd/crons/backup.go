@@ -10,7 +10,7 @@ import (
 )
 
 func BackupCron(c *cron.Cron, bucket bucket.Bucket) {
-	if os.Getenv("ENV") == "dev" {
+	if os.Getenv("ENV") == "local" {
 		return
 	}
 	err := c.AddFunc("@every 1h", func() {

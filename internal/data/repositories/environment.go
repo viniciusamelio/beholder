@@ -43,7 +43,7 @@ func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either
 	).OFFSET(
 		pagination.Skip.Int64,
 	).ORDER_BY(
-		table.Environments.ID.ASC(),
+		table.Environments.ID.DESC(),
 	).Query(er.db, &dest)
 
 	if err != nil {

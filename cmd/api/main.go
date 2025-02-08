@@ -9,6 +9,7 @@ import (
 	"beholder-api/internal/services/bucket"
 	"beholder-api/internal/services/providers"
 	"database/sql"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/pressly/goose/v3"
@@ -18,15 +19,15 @@ import (
 func main() {
 	godotenv.Load()
 	services.InitSomClient()
-
 	r2 := bucket.InitR2Bucket()
-	r2.DownloadFile("backup", "beholder.db")
+	if os.Getenv("ENV") != "local" {
+		r2.DownloadFile("backup", "beholder.db")
+	}
 
 	fx.New(
 		fx.Provide(
 			services.NewSomDatasource,
 			services.InitSqlite,
-			repositories.NewCallRepository,
 			repositories.NewEnvironmentRepository,
 			repositories.NewSessionRepository,
 			providers.NewCloudTasksProvider,

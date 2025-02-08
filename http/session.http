@@ -5,8 +5,9 @@ POST {{BASE}}/session
 Content-Type: application/json
 
 {
-    "env_uid" : 2145670309036949504,
-    "user_id" : "homolog-user"
+    "env_uid" : 2150372770519711744,
+    "user_id" : "homolog-user",
+    "tags" : ["homolog", "beta-tester", "cool-tag"]
 }
 
 ### Replay Session
