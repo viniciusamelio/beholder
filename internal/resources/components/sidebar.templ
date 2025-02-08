@@ -3,7 +3,7 @@ package components
 import "beholder-api/internal/application/models"
 
 templ Sidebar(envs *[]*models.Environment) {
-<aside class="sidebar w-64 h-screen bg-card border-r-2 border-border flex flex-col text-foreground">
+<aside class="sidebar w-64 h-screen sticky top-0 left-0 bg-card border-r-2 border-border flex flex-col text-foreground">
     <div class="p-4 border-b border-border">
         <div class="dropdown w-full">
             <button class="w-full px-3 py-2 text-sm text-left rounded-lg hover:bg-secondary flex items-center">
@@ -66,15 +66,15 @@ templ Sidebar(envs *[]*models.Environment) {
     </nav>
 
     <!-- Sidebar Footer -->
-    <div class="border-t border-border p-4">
-        <button class="w-full flex items-center space-x-3">
-            <img src="https://ui-avatars.com/api/?name=John+Doe" class="w-8 h-8 rounded-full">
-            <div class="flex-1 text-left">
-                <div class="text-sm font-medium">John Doe</div>
-                <div class="text-xs text-gray-500">john@example.com</div>
-            </div>
-            <i class="ri-more-line"></i>
-        </button>
-    </div>
+    // <div class="border-t border-border p-4">
+    //     <button class="w-full flex items-center space-x-3">
+    //         <img src="https://ui-avatars.com/api/?name=John+Doe" class="w-8 h-8 rounded-full">
+    //         <div class="flex-1 text-left">
+    //             <div class="text-sm font-medium">John Doe</div>
+    //             <div class="text-xs text-gray-500">john@example.com</div>
+    //         </div>
+    //         <i class="ri-more-line"></i>
+    //     </button>
+    // </div>
 </aside>
 }

@@ -28,17 +28,41 @@ func NewEnvironmentRepository(ds *services.SomDatasource, db *sql.DB) *Environme
 }
 
 func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Environment] {
-	context := context.Background()
-	foundItems, err := er.ds.Environment().
-		Query().
-		Limit(int(pagination.Take.Int64)).
-		Offset(int(pagination.Skip.Int64)).
-		Order().
-		All(context)
+	dest := []model.Environments{}
+
+	err := table.Environments.SELECT(
+		table.Environments.ID,
+		table.Environments.Name,
+		table.Environments.Description,
+		table.Environments.Tags,
+		table.Environments.BaseURL,
+	).FROM(
+		table.Environments,
+	).LIMIT(
+		pagination.Take.Int64,
+	).OFFSET(
+		pagination.Skip.Int64,
+	).ORDER_BY(
+		table.Environments.ID.ASC(),
+	).Query(er.db, &dest)
+
 	if err != nil {
 		return utils.NewLeft[utils.Failure, *[]*models.Environment](utils.NewUnknownFailure(err.Error(), nil))
 	}
-	return utils.NewRight[utils.Failure](&foundItems)
+
+	mappedEnvs := []*models.Environment{}
+
+	for _, v := range dest {
+		env := models.Environment{
+			Name:        v.Name,
+			Description: *v.Description,
+			Tags:        strings.Split(*v.Tags, ", "),
+			BaseUrl:     *v.BaseURL,
+		}
+		mappedEnvs = append(mappedEnvs, &env)
+	}
+
+	return utils.NewRight[utils.Failure](&mappedEnvs)
 }
 
 func (er *EnvironmentRepository) GetDetailed(id int, pagination dtos.PaginationDto) utils.Either[utils.Failure, *models.Environment] {
