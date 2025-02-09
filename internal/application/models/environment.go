@@ -2,19 +2,16 @@ package models
 
 import (
 	"time"
-
-	"github.com/go-surreal/som"
 )
 
 type Environment struct {
-	som.Node
-	UID         int        `json:"id" som:"id"`
-	Description string     `json:"description"`
-	Name        string     `json:"name" som:"name"`
-	Tags        []string   `json:"tags" som:"tags"`
-	BaseUrl     string     `json:"base_url" som:"base_url"`
-	CreatedAt   *time.Time `json:"created_at" som:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at" som:"updated_at"`
+	ID          int        `json:"id"`
+	Description *string    `json:"description"`
+	Name        string     `json:"name"`
+	Tags        []string   `json:"tags"`
+	BaseURL     string     `json:"base_url"`
+	CreatedAt   *time.Time `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
 
-	Sessions *[]*Session `json:"sessions" som:"->session.environment"`
+	Sessions *[]*Session `json:"sessions"`
 }

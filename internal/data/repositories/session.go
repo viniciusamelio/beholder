@@ -1,10 +1,10 @@
 package repositories
 
 import (
+	"beholder-api/internal/application/models"
 	"beholder-api/internal/dtos"
 	"beholder-api/internal/jet/model"
 	"beholder-api/internal/jet/table"
-	"beholder-api/internal/services"
 	"beholder-api/internal/utils"
 	"database/sql"
 	"fmt"
@@ -15,19 +15,17 @@ import (
 
 type SessionRepository struct {
 	db        *sql.DB
-	ds        services.SomDatasource
 	tableName string
 }
 
-func NewSessionRepository(ds *services.SomDatasource, db *sql.DB) *SessionRepository {
+func NewSessionRepository(db *sql.DB) *SessionRepository {
 	return &SessionRepository{
-		ds:        *ds,
 		tableName: "session",
 		db:        db,
 	}
 }
 
-func (sr *SessionRepository) Create(session model.Sessions) utils.Either[utils.Failure, *model.Sessions] {
+func (sr *SessionRepository) Create(session model.Sessions) utils.Either[utils.Failure, *models.Session] {
 	dest := model.Sessions{}
 	err := table.Sessions.INSERT(
 		table.Sessions.ID,
@@ -46,10 +44,10 @@ func (sr *SessionRepository) Create(session model.Sessions) utils.Either[utils.F
 	if err != nil {
 		fmt.Print(err.Error())
 		code := 404
-		return utils.NewLeft[utils.Failure, *model.Sessions](utils.NewUnknownFailure("environment not found", &code))
+		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("environment not found", &code))
 	}
 
-	return utils.NewRight[utils.Failure](&dest)
+	return models.SessionFromDataModel(dest)
 }
 
 func (sr *SessionRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*model.Sessions] {

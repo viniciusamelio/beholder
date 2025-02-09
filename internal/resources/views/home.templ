@@ -10,7 +10,7 @@ templ Home(envs *[]*models.Environment, breadcrumb []templates.BreadcrumbItem) {
         @templates.Dashboard(breadcrumb, envs) {
             <section class="px-6 py-4 flex flex-col gap-2 w-full">
                 for _,env := range *envs {
-                <a href={templ.SafeURL(string(fmt.Sprintf("/app/env/%d/sessions", env.UID)))}
+                <a href={templ.SafeURL(string(fmt.Sprintf("/app/env/%d/sessions", env.ID)))}
                     class="uk-card uk-card-body hover:animate-pulse max-w">
                     <h3 class="uk-card-title">{env.Name}</h3>
                     <p class="mt-4 flex flex-row gap-2">

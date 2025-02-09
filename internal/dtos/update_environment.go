@@ -19,10 +19,10 @@ func (u UpdateEnvironmentDto) ToModel() models.Environment {
 		u.Tags[i] = slug.Make(v)
 	}
 	environment := models.Environment{
-		UID:         u.ID,
-		Description: *u.Description,
+		ID:          u.ID,
+		Description: u.Description,
 		Name:        slug.Make(u.Name),
-		BaseUrl:     u.BaseUrl,
+		BaseURL:     u.BaseUrl,
 		Tags:        u.Tags,
 	}
 

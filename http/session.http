@@ -6,7 +6,7 @@ Content-Type: application/json
 
 {
     "env_uid" : 2150372770519711744,
-    "user_id" : "homolog-user",
+    "user_id" : "homolog-user-10000th",
     "tags" : ["homolog", "beta-tester", "cool-tag"]
 }
 

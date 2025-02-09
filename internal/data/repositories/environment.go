@@ -3,12 +3,9 @@ package repositories
 import (
 	"beholder-api/internal/application/models"
 	"beholder-api/internal/dtos"
-	"beholder-api/internal/gen/som/where"
 	"beholder-api/internal/jet/model"
 	"beholder-api/internal/jet/table"
-	"beholder-api/internal/services"
 	"beholder-api/internal/utils"
-	"context"
 	"database/sql"
 	"strconv"
 	"strings"
@@ -18,13 +15,12 @@ import (
 )
 
 type EnvironmentRepository struct {
-	ds        services.SomDatasource
 	db        *sql.DB
 	tableName string
 }
 
-func NewEnvironmentRepository(ds *services.SomDatasource, db *sql.DB) *EnvironmentRepository {
-	return &EnvironmentRepository{ds: *ds, tableName: "environment", db: db}
+func NewEnvironmentRepository(db *sql.DB) *EnvironmentRepository {
+	return &EnvironmentRepository{tableName: "environment", db: db}
 }
 
 func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Environment] {
@@ -53,11 +49,15 @@ func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either
 	mappedEnvs := []*models.Environment{}
 
 	for _, v := range dest {
+		ID, _ := strconv.Atoi(*v.ID)
 		env := models.Environment{
+			ID:          ID,
 			Name:        v.Name,
-			Description: *v.Description,
+			Description: v.Description,
 			Tags:        strings.Split(*v.Tags, ", "),
-			BaseUrl:     *v.BaseURL,
+			BaseURL:     *v.BaseURL,
+			CreatedAt:   v.CreatedAt,
+			UpdatedAt:   v.UpdatedAt,
 		}
 		mappedEnvs = append(mappedEnvs, &env)
 	}
@@ -66,26 +66,26 @@ func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either
 }
 
 func (er *EnvironmentRepository) GetDetailed(id int, pagination dtos.PaginationDto) utils.Either[utils.Failure, *models.Environment] {
-	context := context.Background()
-	foundItem, err := er.ds.Environment().
-		Query().
-		Filter(where.Environment.UID.Equal(id)).
-		First(context)
+	environment := models.Environment{}
+
+	err := table.Environments.SELECT(
+		table.Environments.ID,
+		table.Environments.Name,
+		table.Environments.Description,
+		table.Environments.Tags,
+		table.Environments.BaseURL,
+	).FROM(
+		table.Environments.INNER_JOIN(
+			table.Sessions,
+			table.Sessions.EnvironmentID.EQ(sqlite.String(strconv.Itoa(id))),
+		),
+	).WHERE(
+		table.Environments.ID.EQ(sqlite.String(strconv.Itoa(id))),
+	).Query(er.db, &environment)
 	if err != nil {
 		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
 	}
-	sessions, err := er.ds.Session().
-		Query().
-		Filter(where.Session.EnvUID.Equal(id)).
-		Limit(int(pagination.Take.Int64)).
-		Offset(int(pagination.Skip.Int64)).
-		Order().
-		All(context)
-	if err != nil {
-		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
-	}
-	foundItem.Sessions = &sessions
-	return utils.NewRight[utils.Failure](foundItem)
+	return utils.NewRight[utils.Failure](&environment)
 }
 
 func (er *EnvironmentRepository) Create(env model.Environments) utils.Either[utils.Failure, *model.Environments] {
@@ -120,7 +120,7 @@ func (er *EnvironmentRepository) Update(ID int, env models.Environment) utils.Ei
 	).SET(
 		&env.Name,
 		&env.Description,
-		&env.BaseUrl,
+		&env.BaseURL,
 		strings.Join(env.Tags, ", "),
 		time.Now(),
 	).

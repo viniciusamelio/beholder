@@ -18,7 +18,6 @@ import (
 
 func main() {
 	godotenv.Load()
-	services.InitSomClient()
 	r2 := bucket.InitR2Bucket()
 	if os.Getenv("ENV") != "local" {
 		r2.DownloadFile("backup", "beholder.db")
@@ -26,7 +25,6 @@ func main() {
 
 	fx.New(
 		fx.Provide(
-			services.NewSomDatasource,
 			services.InitSqlite,
 			repositories.NewEnvironmentRepository,
 			repositories.NewSessionRepository,
