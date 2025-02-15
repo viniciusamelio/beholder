@@ -11,17 +11,17 @@ import (
 	"time"
 )
 
-type Calls struct {
+type Requests struct {
 	ID            *string `sql:"primary_key"`
-	SessionID     *string
 	EnvironmentID *string
+	SessionID     *string
 	Name          string
+	UserID        string
 	Method        string
-	Path          *string
+	Path          string
 	Body          *string
-	QueryParams   *string
-	UserID        *string
+	Headers       *string
 	CalledAt      time.Time
 	CreatedAt     *time.Time
-	UpdatedAt     time.Time
+	UpdatedAt     *time.Time
 }

@@ -82,23 +82,23 @@ func (sr *SessionRepository) Delete(id int) utils.Either[utils.Failure, bool] {
 
 }
 
-func (sr *SessionRepository) GetCalls(id int) utils.Either[utils.Failure, *dtos.GetCallsFromSessionResponseDto] {
-	dest := dtos.GetCallsFromSessionResponseDto{}
-	err := table.Calls.SELECT(
-		table.Calls.AllColumns.As("Calls"),
-		table.Environments.BaseURL.AS("BaseURL"),
+func (sr *SessionRepository) GetCalls(id int) utils.Either[utils.Failure, *dtos.GetRequestsFromSessionResponseDto] {
+	dest := dtos.GetRequestsFromSessionResponseDto{}
+	err := table.Requests.SELECT(
+		table.Requests.AllColumns.As("requests"),
+		table.Environments.BaseURL.AS("base_url"),
 	).
-		FROM(table.Calls.Table.INNER_JOIN(
+		FROM(table.Requests.Table.INNER_JOIN(
 			table.Sessions.Table,
-			table.Calls.SessionID.EQ(table.Sessions.ID),
+			table.Requests.SessionID.EQ(table.Sessions.ID),
 		)).
 		WHERE(
-			table.Calls.SessionID.EQ(
+			table.Requests.SessionID.EQ(
 				sqlite.String(strconv.Itoa(id))),
 		).Query(sr.db, &dest)
 	if err != nil {
 		code := 400
-		return utils.NewLeft[utils.Failure, *dtos.GetCallsFromSessionResponseDto](utils.NewUnknownFailure("failed to get calls", &code))
+		return utils.NewLeft[utils.Failure, *dtos.GetRequestsFromSessionResponseDto](utils.NewUnknownFailure("failed to get calls", &code))
 	}
 
 	return utils.NewRight[utils.Failure](&dest)

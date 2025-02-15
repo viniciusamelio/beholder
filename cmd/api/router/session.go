@@ -56,7 +56,7 @@ func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskServic
 			func(f utils.Failure) {
 				ErrorResponse(c, 400, f.Message())
 			},
-			func(c *dtos.GetCallsFromSessionResponseDto) {
+			func(c *dtos.GetRequestsFromSessionResponseDto) {
 				taskService.Execute(c)
 			},
 		)

@@ -1,0 +1,19 @@
+@BASE=http://localhost:8080
+
+### Create request
+POST {{BASE}}/request
+Content-Type: application/json
+
+{
+    "name" : "create foo ",
+    "path" : "/foo",
+    "method" : "POST",
+    "called_at" : "2006-01-02T15:10:05Z",
+    "environment_id": 2152623546487013376,
+    "user_id" : "pretty-little-liars",
+    "body" : "{'foo' : 'bar edited againnn'}"
+}
+
+### Get calls
+GET {{BASE}}/request
+Content-Type: application/json

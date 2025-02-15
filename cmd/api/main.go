@@ -28,6 +28,7 @@ func main() {
 			services.InitSqlite,
 			repositories.NewEnvironmentRepository,
 			repositories.NewSessionRepository,
+			repositories.NewRequestRepository,
 			providers.NewHttpTasksProvider,
 			func() bucket.Bucket {
 				return r2
