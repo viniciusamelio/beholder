@@ -26,24 +26,37 @@ func (rr *RequestRepository) Create(request model.Requests) utils.Action[*models
 		fmt.Println(err.Error())
 		return utils.NewLeft[utils.Failure, *models.Request](utils.NewUnknownFailure("Error creating request", &code))
 	}
-	output := models.RequestFromDataModel(request)
-	return utils.NewRight[utils.Failure](&output)
+	return utils.NewRight[utils.Failure](models.RequestFromDataModel(request))
 }
 
-func (rr *RequestRepository) Get(pagination dtos.PaginationDto) utils.Action[[]models.Request] {
-	dest := []model.Requests{}
+func (rr *RequestRepository) Get(pagination dtos.PaginationDto) utils.Action[*[]*models.Request] {
+	dest := []models.FullRequestDataModel{}
 	err := table.Requests.SELECT(
 		table.Requests.AllColumns,
-	).LIMIT(
-		pagination.Take.Int64,
-	).OFFSET(
-		pagination.Skip.Int64,
-	).Query(rr.db, &dest)
+		table.Environments.AllColumns,
+		table.Sessions.AllColumns,
+	).
+		FROM(
+			table.Requests.
+				INNER_JOIN(
+					table.Environments,
+					table.Requests.EnvironmentID.EQ(table.Environments.ID),
+				).
+				LEFT_JOIN(
+					table.Sessions,
+					table.Requests.SessionID.EQ(table.Sessions.ID),
+				),
+		).
+		ORDER_BY(table.Requests.CreatedAt.DESC()).
+		LIMIT(pagination.Take.Int64).
+		OFFSET(pagination.Skip.Int64).
+		Query(rr.db, &dest)
 
 	if err != nil {
+		fmt.Print(err.Error())
 		code := 400
-		return utils.NewLeft[utils.Failure, []models.Request](utils.NewUnknownFailure("Error getting requests", &code))
+		return utils.NewLeft[utils.Failure, *[]*models.Request](utils.NewUnknownFailure("Error getting requests", &code))
 	}
 
-	return utils.NewRight[utils.Failure](models.RequestFromDataModelSlice(dest))
+	return utils.NewRight[utils.Failure](models.RequestsFromFullDataModels(dest))
 }

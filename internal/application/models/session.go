@@ -7,9 +7,9 @@ import (
 )
 
 type Session struct {
-	ID            int        `json:"id"`
-	EnvironmentID int        `json:"environment_id"`
-	UserID        string     `json:"user_id"`
+	ID            int        `json:"id,omitempty"`
+	EnvironmentID int        `json:"environment_id,omitempty"`
+	UserID        string     `json:"user_id,omitempty"`
 	CreatedAt     *time.Time `json:"created_at,omitempty"`
 	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
 	Tags          []string   `json:"tags,omitempty"`

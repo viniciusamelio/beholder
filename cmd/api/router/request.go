@@ -40,7 +40,7 @@ func RequestRouter(e *echo.Echo, repo repositories.RequestRepository) *echo.Grou
 			func(f utils.Failure) {
 				ErrorResponse(c, *f.Code(), f.Message())
 			},
-			func(r []models.Request) {
+			func(r *[]*models.Request) {
 				Response(c, 200, r)
 			},
 		)

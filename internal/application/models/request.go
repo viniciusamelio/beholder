@@ -20,16 +20,24 @@ type Request struct {
 	CalledAt      time.Time  `json:"called_at"`
 	CreatedAt     time.Time  `json:"created_at"`
 	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
+
+	Session     *Session     `json:"session,omitempty,omitzero"`
+	Environment *Environment `json:"environment,omitempty,omitzero"`
+}
+type FullRequestDataModel struct {
+	model.Requests
+	Session     *model.Sessions
+	Environment *model.Environments
 }
 
-func RequestFromDataModel(r model.Requests) Request {
+func RequestFromDataModel(r model.Requests) *Request {
 	ID := r.ID
 	EnvironmentID := *r.EnvironmentID
 	var SessionID int
 	if r.SessionID != nil {
 		SessionID = int(*r.SessionID)
 	}
-	return Request{
+	return &Request{
 		ID:            int(*ID),
 		EnvironmentID: int(EnvironmentID),
 		SessionID:     &SessionID,
@@ -46,15 +54,59 @@ func RequestFromDataModel(r model.Requests) Request {
 
 }
 
-func RequestFromDataModelSlice(r []model.Requests) []Request {
-	requests := []Request{}
+func RequestFromFullDataModel(r FullRequestDataModel) *Request {
+	ID := r.ID
+	EnvironmentID := *r.EnvironmentID
+	var SessionID int
+	if r.SessionID != nil {
+		SessionID = int(*r.SessionID)
+	}
+	var session Session
+	var environment Environment
+
+	if r.Session != nil {
+		session = *SessionFromDataModel(*r.Session)
+	}
+	if r.Environment != nil {
+		environment = *EnvironmentFromDataModel(*r.Environment)
+	}
+	return &Request{
+		ID:            int(*ID),
+		EnvironmentID: int(EnvironmentID),
+		SessionID:     &SessionID,
+		UserID:        r.UserID,
+		Method:        r.Method,
+		Name:          r.Name,
+		Path:          r.Path,
+		Headers:       r.Headers,
+		Body:          r.Body,
+		CalledAt:      r.CalledAt,
+		CreatedAt:     *r.CreatedAt,
+		UpdatedAt:     r.UpdatedAt,
+		Session:       &session,
+		Environment:   &environment,
+	}
+
+}
+
+func RequestsFromDataModels(r []model.Requests) *[]*Request {
+	requests := []*Request{}
 
 	for i := 0; i < len(r); i++ {
 		requests = append(requests, RequestFromDataModel(r[i]))
 	}
 
-	return requests
+	return &requests
+}
 
+func RequestsFromFullDataModels(r []FullRequestDataModel) *[]*Request {
+	requests := []*Request{}
+
+	for i := 0; i < len(r); i++ {
+		requests = append(requests, RequestFromFullDataModel(r[i]))
+	}
+
+	return &requests
 }
 
 func (r *Request) ToModel() model.Requests {

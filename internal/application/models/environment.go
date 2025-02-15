@@ -7,9 +7,9 @@ import (
 )
 
 type Environment struct {
-	ID          int        `json:"id"`
+	ID          int        `json:"id,omitempty"`
 	Description *string    `json:"description,omitempty"`
-	Name        string     `json:"name"`
+	Name        string     `json:"name,omitempty"`
 	Tags        []string   `json:"tags,omitempty"`
 	BaseURL     string     `json:"base_url"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`
