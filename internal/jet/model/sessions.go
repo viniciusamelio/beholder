@@ -12,8 +12,8 @@ import (
 )
 
 type Sessions struct {
-	ID            *string `sql:"primary_key"`
-	EnvironmentID *string
+	ID            *int32 `sql:"primary_key"`
+	EnvironmentID *int32
 	UserID        *string
 	Tags          *string
 	CreatedAt     *time.Time

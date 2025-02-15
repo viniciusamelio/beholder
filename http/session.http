@@ -5,8 +5,8 @@ POST {{BASE}}/session
 Content-Type: application/json
 
 {
-    "env_uid" : 2151545905495408640,
-    "user_id" : "homolog-user-10000th",
+    "environment_id" : -545255424,
+    "user_id" : "vini.jhonson",
     "tags" : ["homolog", "beta-tester", "cool-tag"]
 }
 

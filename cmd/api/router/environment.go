@@ -1,9 +1,9 @@
 package router
 
 import (
+	"beholder-api/internal/application/models"
 	"beholder-api/internal/data/repositories"
 	"beholder-api/internal/dtos"
-	"beholder-api/internal/jet/model"
 	"beholder-api/internal/utils"
 	"strconv"
 
@@ -26,7 +26,7 @@ func EnvironmentRoutes(r *echo.Echo, repo repositories.EnvironmentRepository) *e
 			func(f utils.Failure) {
 				ErrorResponse(c, *f.Code(), f.Message())
 			},
-			func(e *model.Environments) {
+			func(e *models.Environment) {
 				Response(c, 201, e)
 			},
 		)
@@ -51,7 +51,7 @@ func EnvironmentRoutes(r *echo.Echo, repo repositories.EnvironmentRepository) *e
 			func(f utils.Failure) {
 				ErrorResponse(c, *f.Code(), f.Message())
 			},
-			func(e *model.Environments) {
+			func(e *models.Environment) {
 				Response(c, 200, e)
 			},
 		)

@@ -12,9 +12,9 @@ import (
 )
 
 type Requests struct {
-	ID            *string `sql:"primary_key"`
-	EnvironmentID *string
-	SessionID     *string
+	ID            *int32 `sql:"primary_key"`
+	EnvironmentID *int32
+	SessionID     *int32
 	Name          string
 	UserID        string
 	Method        string

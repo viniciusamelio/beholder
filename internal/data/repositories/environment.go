@@ -7,7 +7,6 @@ import (
 	"beholder-api/internal/jet/table"
 	"beholder-api/internal/utils"
 	"database/sql"
-	"strconv"
 	"strings"
 	"time"
 
@@ -46,27 +45,11 @@ func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either
 		return utils.NewLeft[utils.Failure, *[]*models.Environment](utils.NewUnknownFailure(err.Error(), nil))
 	}
 
-	mappedEnvs := []*models.Environment{}
-
-	for _, v := range dest {
-		ID, _ := strconv.Atoi(*v.ID)
-		env := models.Environment{
-			ID:          ID,
-			Name:        v.Name,
-			Description: v.Description,
-			Tags:        strings.Split(*v.Tags, ", "),
-			BaseURL:     *v.BaseURL,
-			CreatedAt:   v.CreatedAt,
-			UpdatedAt:   v.UpdatedAt,
-		}
-		mappedEnvs = append(mappedEnvs, &env)
-	}
-
-	return utils.NewRight[utils.Failure](&mappedEnvs)
+	return utils.NewRight[utils.Failure](models.EnvironmentsFromDataModel(dest))
 }
 
 func (er *EnvironmentRepository) GetDetailed(id int, pagination dtos.PaginationDto) utils.Either[utils.Failure, *models.Environment] {
-	environment := models.Environment{}
+	environment := model.Environments{}
 
 	err := table.Environments.SELECT(
 		table.Environments.ID,
@@ -77,39 +60,31 @@ func (er *EnvironmentRepository) GetDetailed(id int, pagination dtos.PaginationD
 	).FROM(
 		table.Environments.INNER_JOIN(
 			table.Sessions,
-			table.Sessions.EnvironmentID.EQ(sqlite.String(strconv.Itoa(id))),
+			table.Sessions.EnvironmentID.EQ(sqlite.Int32(int32(id))),
 		),
 	).WHERE(
-		table.Environments.ID.EQ(sqlite.String(strconv.Itoa(id))),
+		table.Environments.ID.EQ(sqlite.Int32(int32(id))),
 	).Query(er.db, &environment)
 	if err != nil {
 		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
 	}
-	return utils.NewRight[utils.Failure](&environment)
+	return utils.NewRight[utils.Failure](models.EnvironmentFromDataModel(environment))
 }
 
-func (er *EnvironmentRepository) Create(env model.Environments) utils.Either[utils.Failure, *model.Environments] {
-	envModel := model.Environments{}
-
-	err := table.Environments.INSERT(
-		table.Environments.ID,
-		table.Environments.Name,
-		table.Environments.Description,
-		table.Environments.Tags,
-		table.Environments.BaseURL,
-	).VALUES(utils.GenSnowflakeID(), env.Name, "Something cool", env.Tags, env.BaseURL).
+func (er *EnvironmentRepository) Create(env model.Environments) utils.Action[*models.Environment] {
+	err := table.Environments.INSERT().MODEL(env).
 		RETURNING(table.Environments.AllColumns).
-		Query(er.db, &envModel)
+		Query(er.db, &env)
 
 	if err != nil {
 		status := 400
-		return utils.NewLeft[utils.Failure, *model.Environments](utils.NewUnknownFailure(err.Error(), &status))
+		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), &status))
 	}
-	return utils.NewRight[utils.Failure](&envModel)
+	return utils.NewRight[utils.Failure](models.EnvironmentFromDataModel(env))
 
 }
 
-func (er *EnvironmentRepository) Update(ID int, env models.Environment) utils.Either[utils.Failure, *model.Environments] {
+func (er *EnvironmentRepository) Update(ID int, env models.Environment) utils.Either[utils.Failure, *models.Environment] {
 	dest := model.Environments{}
 	err := table.Environments.UPDATE(
 		table.Environments.Name,
@@ -125,14 +100,14 @@ func (er *EnvironmentRepository) Update(ID int, env models.Environment) utils.Ei
 		time.Now(),
 	).
 		WHERE(
-			table.Environments.ID.EQ(sqlite.String(strconv.Itoa(ID))),
+			table.Environments.ID.EQ(sqlite.Int32(int32(ID))),
 		).
 		RETURNING(table.Environments.AllColumns).
 		Query(er.db, &dest)
 
 	if err != nil {
-		return utils.NewLeft[utils.Failure, *model.Environments](utils.NewUnknownFailure(err.Error(), nil))
+		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
 	}
 
-	return utils.NewRight[utils.Failure](&dest)
+	return utils.NewRight[utils.Failure](models.EnvironmentFromDataModel(dest))
 }

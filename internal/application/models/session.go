@@ -2,42 +2,64 @@ package models
 
 import (
 	"beholder-api/internal/jet/model"
-	"beholder-api/internal/utils"
-	"strconv"
 	"strings"
 	"time"
 )
 
 type Session struct {
 	ID            int        `json:"id"`
-	EnvironmentID int        `json:"environment_uid"`
+	EnvironmentID int        `json:"environment_id"`
 	UserID        string     `json:"user_id"`
-	CreatedAt     *time.Time `json:"created_at"`
-	UpdatedAt     *time.Time `json:"updated_at"`
-	Tags          []string   `json:"tags"`
+	CreatedAt     *time.Time `json:"created_at,omitempty"`
+	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
+	Tags          []string   `json:"tags,omitempty"`
 
-	Env *Environment `json:"env"`
+	Environment *Environment `json:"environment,omitempty"`
 }
 
-func SessionFromDataModel(model model.Sessions) utils.Either[utils.Failure, *Session] {
-	ID, err := strconv.Atoi(*model.ID)
+type FullSessionDataModel struct {
+	model.Sessions
+	Environment *model.Environments
+}
 
-	if err != nil {
-		return utils.FailureOf[*Session](err, 500)
+func SessionFromDataModel(model model.Sessions) *Session {
+
+	return &Session{
+		ID:            int(*model.ID),
+		EnvironmentID: int(*model.EnvironmentID),
+		UserID:        *model.UserID,
+		CreatedAt:     model.CreatedAt,
+		UpdatedAt:     model.UpdatedAt,
+		Tags:          strings.Split(*model.Tags, ", "),
 	}
-	EnvironmentID, err := strconv.Atoi(*model.EnvironmentID)
-	if err != nil {
-		return utils.FailureOf[*Session](err, 500)
+}
+
+func SessionFromFullDataModel(model FullSessionDataModel) *Session {
+	return &Session{
+		ID:            int(*model.ID),
+		EnvironmentID: int(*model.EnvironmentID),
+		UserID:        *model.UserID,
+		CreatedAt:     model.CreatedAt,
+		UpdatedAt:     model.UpdatedAt,
+		Tags:          strings.Split(*model.Tags, ", "),
+		Environment:   EnvironmentFromDataModel(*model.Environment),
+	}
+}
+
+func SessionsFromDataModel(models []*model.Sessions) *[]*Session {
+	var sessions []*Session
+	for _, model := range models {
+		sessions = append(sessions, SessionFromDataModel(*model))
 	}
 
-	return utils.NewRight[utils.Failure](
-		&Session{
-			ID:            ID,
-			EnvironmentID: EnvironmentID,
-			UserID:        *model.UserID,
-			CreatedAt:     model.CreatedAt,
-			UpdatedAt:     model.UpdatedAt,
-			Tags:          strings.Split(*model.Tags, ", "),
-		},
-	)
+	return &sessions
+}
+
+func SessionsFromFullDataModel(models []FullSessionDataModel) *[]*Session {
+	var sessions []*Session
+	for _, model := range models {
+		sessions = append(sessions, SessionFromFullDataModel(model))
+	}
+
+	return &sessions
 }

@@ -12,7 +12,7 @@ import (
 )
 
 type Environments struct {
-	ID          *string `sql:"primary_key"`
+	ID          *int32 `sql:"primary_key"`
 	Name        string
 	Description *string
 	Tags        *string

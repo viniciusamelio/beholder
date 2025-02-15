@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 SELECT 'up SQL query';
 CREATE TABLE environments (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     tags TEXT,

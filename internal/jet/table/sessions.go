@@ -17,8 +17,8 @@ type sessionsTable struct {
 	sqlite.Table
 
 	// Columns
-	ID            sqlite.ColumnString
-	EnvironmentID sqlite.ColumnString
+	ID            sqlite.ColumnInteger
+	EnvironmentID sqlite.ColumnInteger
 	UserID        sqlite.ColumnString
 	Tags          sqlite.ColumnString
 	CreatedAt     sqlite.ColumnTimestamp
@@ -63,8 +63,8 @@ func newSessionsTable(schemaName, tableName, alias string) *SessionsTable {
 
 func newSessionsTableImpl(schemaName, tableName, alias string) sessionsTable {
 	var (
-		IDColumn            = sqlite.StringColumn("id")
-		EnvironmentIDColumn = sqlite.StringColumn("environment_id")
+		IDColumn            = sqlite.IntegerColumn("id")
+		EnvironmentIDColumn = sqlite.IntegerColumn("environment_id")
 		UserIDColumn        = sqlite.StringColumn("user_id")
 		TagsColumn          = sqlite.StringColumn("tags")
 		CreatedAtColumn     = sqlite.TimestampColumn("created_at")

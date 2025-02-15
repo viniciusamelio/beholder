@@ -8,7 +8,6 @@ import (
 	"beholder-api/internal/utils"
 	"database/sql"
 	"fmt"
-	"strconv"
 
 	"github.com/go-jet/jet/v2/sqlite"
 )
@@ -26,20 +25,9 @@ func NewSessionRepository(db *sql.DB) *SessionRepository {
 }
 
 func (sr *SessionRepository) Create(session model.Sessions) utils.Either[utils.Failure, *models.Session] {
-	dest := model.Sessions{}
-	err := table.Sessions.INSERT(
-		table.Sessions.ID,
-		table.Sessions.EnvironmentID,
-		table.Sessions.UserID,
-		table.Sessions.Tags,
-	).VALUES(
-		session.ID,
-		session.EnvironmentID,
-		session.UserID,
-		session.Tags,
-	).RETURNING(
+	err := table.Sessions.INSERT().MODEL(session).RETURNING(
 		table.Sessions.AllColumns,
-	).Query(sr.db, &dest)
+	).Query(sr.db, &session)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -47,31 +35,38 @@ func (sr *SessionRepository) Create(session model.Sessions) utils.Either[utils.F
 		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("environment not found", &code))
 	}
 
-	return models.SessionFromDataModel(dest)
+	return utils.NewRight[utils.Failure](models.SessionFromDataModel(session))
 }
 
-func (sr *SessionRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*model.Sessions] {
-	dest := []*model.Sessions{}
+func (sr *SessionRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Session] {
+	var dest []models.FullSessionDataModel
 
-	err := table.Sessions.SELECT(
+	stmt := table.Sessions.SELECT(
 		table.Sessions.AllColumns,
-	).ORDER_BY(table.Sessions.EnvironmentID.DESC()).
+		table.Environments.AllColumns,
+	).FROM(
+		table.Sessions.INNER_JOIN(
+			table.Environments,
+			table.Sessions.EnvironmentID.EQ(table.Environments.ID),
+		),
+	).ORDER_BY(table.Sessions.CreatedAt.DESC()).
 		OFFSET(pagination.Skip.Int64).
-		LIMIT(pagination.Take.Int64).
-		Query(sr.db, &dest)
+		LIMIT(pagination.Take.Int64)
+
+	err := stmt.Query(sr.db, &dest)
 
 	if err != nil {
 		code := 400
-		return utils.NewLeft[utils.Failure, *[]*model.Sessions](utils.NewUnknownFailure("failed to get sessions", &code))
+		return utils.NewLeft[utils.Failure, *[]*models.Session](utils.NewUnknownFailure("failed to get sessions", &code))
 	}
 
-	return utils.NewRight[utils.Failure](&dest)
+	return utils.NewRight[utils.Failure](models.SessionsFromFullDataModel(dest))
 }
 
 func (sr *SessionRepository) Delete(id int) utils.Either[utils.Failure, bool] {
 	_, err := table.Sessions.DELETE().WHERE(
 		table.Sessions.ID.EQ(
-			sqlite.String(strconv.Itoa(id))),
+			sqlite.Int32(int32(id))),
 	).Exec(sr.db)
 
 	if err != nil {
@@ -82,7 +77,7 @@ func (sr *SessionRepository) Delete(id int) utils.Either[utils.Failure, bool] {
 
 }
 
-func (sr *SessionRepository) GetCalls(id int) utils.Either[utils.Failure, *dtos.GetRequestsFromSessionResponseDto] {
+func (sr *SessionRepository) GetRequests(id int) utils.Either[utils.Failure, *dtos.GetRequestsFromSessionResponseDto] {
 	dest := dtos.GetRequestsFromSessionResponseDto{}
 	err := table.Requests.SELECT(
 		table.Requests.AllColumns.As("requests"),
@@ -94,7 +89,7 @@ func (sr *SessionRepository) GetCalls(id int) utils.Either[utils.Failure, *dtos.
 		)).
 		WHERE(
 			table.Requests.SessionID.EQ(
-				sqlite.String(strconv.Itoa(id))),
+				sqlite.Int32(int32(id))),
 		).Query(sr.db, &dest)
 	if err != nil {
 		code := 400

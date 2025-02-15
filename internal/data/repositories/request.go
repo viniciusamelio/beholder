@@ -26,7 +26,7 @@ func (rr *RequestRepository) Create(request model.Requests) utils.Action[*models
 		fmt.Println(err.Error())
 		return utils.NewLeft[utils.Failure, *models.Request](utils.NewUnknownFailure("Error creating request", &code))
 	}
-	output := models.NewRequestFromModel(request)
+	output := models.RequestFromDataModel(request)
 	return utils.NewRight[utils.Failure](&output)
 }
 
@@ -45,5 +45,5 @@ func (rr *RequestRepository) Get(pagination dtos.PaginationDto) utils.Action[[]m
 		return utils.NewLeft[utils.Failure, []models.Request](utils.NewUnknownFailure("Error getting requests", &code))
 	}
 
-	return utils.NewRight[utils.Failure](models.NewRequestFromModelSlice(dest))
+	return utils.NewRight[utils.Failure](models.RequestFromDataModelSlice(dest))
 }

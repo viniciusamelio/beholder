@@ -21,7 +21,7 @@ func RequestRouter(e *echo.Echo, repo repositories.RequestRepository) *echo.Grou
 		}
 
 		repo.Create(
-			input.ToModel().ToModel(),
+			input.ToModel(),
 		).Fold(
 			func(f utils.Failure) {
 				ErrorResponse(c, *f.Code(), f.Message())

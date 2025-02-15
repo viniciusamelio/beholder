@@ -2,8 +2,8 @@
 -- +goose StatementBegin
 SELECT 'up SQL query';
 CREATE TABLE sessions (
-    id SERIAL PRIMARY KEY,
-    environment_id SERIAL REFERENCES environments(id),
+    id INTEGER PRIMARY KEY,
+    environment_id INTEGER REFERENCES environments(id),
     user_id TEXT,
     tags TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

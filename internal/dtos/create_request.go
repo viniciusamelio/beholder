@@ -1,7 +1,7 @@
 package dtos
 
 import (
-	"beholder-api/internal/application/models"
+	"beholder-api/internal/jet/model"
 	"beholder-api/internal/utils"
 	"time"
 )
@@ -17,19 +17,24 @@ type CreateRequestDto struct {
 	CalledAt      *time.Time `json:"called_at"`
 }
 
-func (dto *CreateRequestDto) ToModel() *models.Request {
-	ID := utils.GenSnowflakeID()
-
-	return &models.Request{
-		ID:            ID,
+func (dto *CreateRequestDto) ToModel() model.Requests {
+	ID := int32(utils.GenSnowflakeID())
+	EnvironmentID := int32(dto.EnvironmentID)
+	var SessionID int32
+	if dto.SessionID != nil {
+		SessionID = int32(*dto.SessionID)
+	}
+	now := time.Now()
+	return model.Requests{
+		ID:            &ID,
 		Name:          dto.Name,
-		EnvironmentID: dto.EnvironmentID,
+		EnvironmentID: &EnvironmentID,
 		Path:          dto.Path,
-		SessionID:     dto.SessionID,
+		SessionID:     &SessionID,
 		Method:        dto.Method,
 		Headers:       dto.Headers,
 		Body:          dto.Body,
 		CalledAt:      *dto.CalledAt,
-		CreatedAt:     time.Now(),
+		CreatedAt:     &now,
 	}
 }

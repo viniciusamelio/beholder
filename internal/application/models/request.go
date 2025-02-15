@@ -2,8 +2,6 @@ package models
 
 import (
 	"beholder-api/internal/jet/model"
-	"beholder-api/internal/utils"
-	"strconv"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -24,13 +22,16 @@ type Request struct {
 	UpdatedAt     *time.Time `json:"updated_at,omitempty"`
 }
 
-func NewRequestFromModel(r model.Requests) Request {
-	ID, _ := strconv.Atoi(*r.ID)
-	EnvironmentID, _ := strconv.Atoi(*r.EnvironmentID)
-	SessionID, _ := strconv.Atoi(*r.SessionID)
+func RequestFromDataModel(r model.Requests) Request {
+	ID := r.ID
+	EnvironmentID := *r.EnvironmentID
+	var SessionID int
+	if r.SessionID != nil {
+		SessionID = int(*r.SessionID)
+	}
 	return Request{
-		ID:            ID,
-		EnvironmentID: EnvironmentID,
+		ID:            int(*ID),
+		EnvironmentID: int(EnvironmentID),
 		SessionID:     &SessionID,
 		UserID:        r.UserID,
 		Method:        r.Method,
@@ -45,11 +46,11 @@ func NewRequestFromModel(r model.Requests) Request {
 
 }
 
-func NewRequestFromModelSlice(r []model.Requests) []Request {
+func RequestFromDataModelSlice(r []model.Requests) []Request {
 	requests := []Request{}
 
 	for i := 0; i < len(r); i++ {
-		requests = append(requests, NewRequestFromModel(r[i]))
+		requests = append(requests, RequestFromDataModel(r[i]))
 	}
 
 	return requests
@@ -58,12 +59,12 @@ func NewRequestFromModelSlice(r []model.Requests) []Request {
 
 func (r *Request) ToModel() model.Requests {
 	now := time.Now()
-	ID := strconv.Itoa(utils.GenSnowflakeID())
-	EnvironmentID := strconv.Itoa(r.EnvironmentID)
-	var SessionID string
+	EnvironmentID := int32(r.EnvironmentID)
+	var SessionID int32
 	if r.SessionID != nil {
-		SessionID = strconv.Itoa(*r.SessionID)
+		SessionID = int32(*r.SessionID)
 	}
+	ID := int32(r.ID)
 	return model.Requests{
 		ID:            &ID,
 		EnvironmentID: &EnvironmentID,

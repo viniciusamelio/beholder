@@ -6,12 +6,13 @@ Content-Type: application/json
 
 {
     "name" : "meu env",
+    "description": "Ambiente de testes pessoal",
     "tags" : ["hml", "staging"],
     "base_url" : "http://stg.viniciusamelio.com.br"
 }
 
 ### Update env
-PUT {{BASE}}/environment/2150353345729003520
+PUT {{BASE}}/environment/-545255424
 Content-Type: application/json
 
 {

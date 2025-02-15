@@ -1,9 +1,9 @@
 -- +goose Up
 -- +goose StatementBegin
 create table requests (
-    id serial primary key,
-    environment_id SERIAL references environments(id),
-    session_id SERIAL,
+    id INTEGER primary key,
+    environment_id INTEGER references environments(id),
+    session_id INTEGER,
     name text not null,
     user_id text not null,
     method text not null,

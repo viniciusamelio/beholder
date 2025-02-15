@@ -17,9 +17,9 @@ type requestsTable struct {
 	sqlite.Table
 
 	// Columns
-	ID            sqlite.ColumnString
-	EnvironmentID sqlite.ColumnString
-	SessionID     sqlite.ColumnString
+	ID            sqlite.ColumnInteger
+	EnvironmentID sqlite.ColumnInteger
+	SessionID     sqlite.ColumnInteger
 	Name          sqlite.ColumnString
 	UserID        sqlite.ColumnString
 	Method        sqlite.ColumnString
@@ -69,9 +69,9 @@ func newRequestsTable(schemaName, tableName, alias string) *RequestsTable {
 
 func newRequestsTableImpl(schemaName, tableName, alias string) requestsTable {
 	var (
-		IDColumn            = sqlite.StringColumn("id")
-		EnvironmentIDColumn = sqlite.StringColumn("environment_id")
-		SessionIDColumn     = sqlite.StringColumn("session_id")
+		IDColumn            = sqlite.IntegerColumn("id")
+		EnvironmentIDColumn = sqlite.IntegerColumn("environment_id")
+		SessionIDColumn     = sqlite.IntegerColumn("session_id")
 		NameColumn          = sqlite.StringColumn("name")
 		UserIDColumn        = sqlite.StringColumn("user_id")
 		MethodColumn        = sqlite.StringColumn("method")

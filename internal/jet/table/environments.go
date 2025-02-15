@@ -17,7 +17,7 @@ type environmentsTable struct {
 	sqlite.Table
 
 	// Columns
-	ID          sqlite.ColumnString
+	ID          sqlite.ColumnInteger
 	Name        sqlite.ColumnString
 	Description sqlite.ColumnString
 	Tags        sqlite.ColumnString
@@ -64,7 +64,7 @@ func newEnvironmentsTable(schemaName, tableName, alias string) *EnvironmentsTabl
 
 func newEnvironmentsTableImpl(schemaName, tableName, alias string) environmentsTable {
 	var (
-		IDColumn          = sqlite.StringColumn("id")
+		IDColumn          = sqlite.IntegerColumn("id")
 		NameColumn        = sqlite.StringColumn("name")
 		DescriptionColumn = sqlite.StringColumn("description")
 		TagsColumn        = sqlite.StringColumn("tags")
