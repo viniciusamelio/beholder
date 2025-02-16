@@ -1,6 +1,7 @@
 package components
 
 import "beholder-api/internal/application/models"
+import "fmt"
 
 templ Sidebar(envs *[]*models.Environment) {
 <aside class="sidebar w-64 h-screen sticky top-0 left-0 bg-card border-r-2 border-border flex flex-col text-foreground">
@@ -52,7 +53,7 @@ templ Sidebar(envs *[]*models.Environment) {
                     <ul>
                         for _,env := range *envs{
                         <li>
-                            <a href={"/env/"+templ.SafeURL(env.UID)}
+                            <a href={templ.SafeURL(fmt.Sprintf("/env/%d", env.ID))}
                                 class="sidebar-item flex items-center text-sm px-3 py-2 rounded-lg">
                                 <span class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
                                 {env.Name}
