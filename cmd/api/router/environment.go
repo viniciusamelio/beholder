@@ -58,5 +58,18 @@ func EnvironmentRoutes(r *echo.Echo, repo repositories.EnvironmentRepository) *e
 		return nil
 	})
 
+	g.GET("", PaginationMiddleware(func(c echo.Context) error {
+		pagination := c.(*PaginationContext)
+		repo.Get(pagination.Pagination).Fold(
+			func(f utils.Failure) {
+				ErrorResponse(c, *f.Code(), f.Message())
+			},
+			func(e *[]*models.Environment) {
+				Response(c, 200, e)
+			},
+		)
+		return nil
+	}))
+
 	return g
 }
