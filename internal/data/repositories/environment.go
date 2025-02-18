@@ -111,3 +111,58 @@ func (er *EnvironmentRepository) Update(ID int, env models.Environment) utils.Ei
 
 	return utils.NewRight[utils.Failure](models.EnvironmentFromDataModel(dest))
 }
+
+func (er *EnvironmentRepository) GetSessions(ID int, pagination dtos.PaginationDto) utils.Action[*[]*models.Session] {
+	dest := []*model.Sessions{}
+	err := table.Sessions.SELECT(
+		table.Sessions.AllColumns,
+	).FROM(
+		table.Sessions.INNER_JOIN(
+			table.Environments,
+			table.Environments.ID.EQ(table.Sessions.EnvironmentID),
+		),
+	).WHERE(
+		table.Environments.ID.EQ(sqlite.Int32(int32(ID))),
+	).LIMIT(
+		pagination.Take.Int64,
+	).OFFSET(
+		pagination.Skip.Int64,
+	).ORDER_BY(
+		table.Sessions.ID.DESC(),
+	).Query(er.db, &dest)
+
+	if err != nil {
+		return utils.NewLeft[utils.Failure, *[]*models.Session](utils.NewUnknownFailure(err.Error(), nil))
+	}
+
+	return utils.NewRight[utils.Failure](models.SessionsFromDataModel(dest))
+}
+
+func (er *EnvironmentRepository) GetRequests(ID int, pagination dtos.PaginationDto) utils.Action[*[]*models.Request] {
+	dest := []model.Requests{}
+	err := table.Requests.SELECT(
+		table.Requests.AllColumns,
+	).FROM(
+		table.Requests.INNER_JOIN(
+			table.Sessions,
+			table.Sessions.ID.EQ(table.Requests.SessionID),
+		).INNER_JOIN(
+			table.Environments,
+			table.Environments.ID.EQ(table.Sessions.EnvironmentID),
+		),
+	).WHERE(
+		table.Environments.ID.EQ(sqlite.Int32(int32(ID))),
+	).LIMIT(
+		pagination.Take.Int64,
+	).OFFSET(
+		pagination.Skip.Int64,
+	).ORDER_BY(
+		table.Requests.ID.DESC(),
+	).Query(er.db, &dest)
+
+	if err != nil {
+		return utils.NewLeft[utils.Failure, *[]*models.Request](utils.NewUnknownFailure(err.Error(), nil))
+	}
+
+	return utils.NewRight[utils.Failure](models.RequestsFromDataModels(dest))
+}

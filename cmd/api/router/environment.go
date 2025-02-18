@@ -71,5 +71,42 @@ func EnvironmentRoutes(r *echo.Echo, repo repositories.EnvironmentRepository) *e
 		return nil
 	}))
 
+	g.GET("/:id/sessions", PaginationMiddleware(func(c echo.Context) error {
+		context := c.(*PaginationContext)
+
+		id := c.Param("id")
+		parsedId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			return ErrorResponse(c, 400, "Invalid id")
+		}
+		repo.GetSessions(int(parsedId), context.Pagination).Fold(
+			func(f utils.Failure) {
+				ErrorResponse(c, *f.Code(), f.Message())
+			},
+			func(e *[]*models.Session) {
+				Response(c, 200, e)
+			},
+		)
+		return nil
+	}))
+
+	g.GET("/:id/requests", PaginationMiddleware(func(c echo.Context) error {
+		context := c.(*PaginationContext)
+		id := c.Param("id")
+		parsedId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			return ErrorResponse(c, 400, "Invalid id")
+		}
+		repo.GetRequests(int(parsedId), context.Pagination).Fold(
+			func(f utils.Failure) {
+				ErrorResponse(c, *f.Code(), f.Message())
+			},
+			func(e *[]*models.Request) {
+				Response(c, 200, e)
+			},
+		)
+		return nil
+	}))
+
 	return g
 }
