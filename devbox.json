@@ -6,7 +6,10 @@
     "sqlite@latest",
     "air@latest",
     "templ@latest",
-    "tailwindcss@latest"
+    "tailwindcss@latest",
+    "protoc-gen-go@latest",
+    "protobuf@latest",
+    "protoc-gen-es@latest"
   ],
   "shell": {
     "init_hook": [

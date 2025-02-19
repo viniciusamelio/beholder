@@ -5,7 +5,7 @@ POST {{BASE}}/environment
 Content-Type: application/json
 
 {
-    "name" : "meu env",
+    "name" : "Novo env",
     "description": "Ambiente de testes pessoal",
     "tags" : ["hml", "staging"],
     "base_url" : "http://stg.viniciusamelio.com.br"

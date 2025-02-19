@@ -21,6 +21,7 @@ require (
 	github.com/tursodatabase/go-libsql v0.0.0-20241221181756-6121e81fbf92
 	github.com/vicanso/go-axios v1.6.1
 	go.uber.org/fx v1.23.0
+	google.golang.org/protobuf v1.33.0
 )
 
 require (

@@ -11,12 +11,11 @@ import (
 func Router(envRepo *repositories.EnvironmentRepository, sessionRepo *repositories.SessionRepository, requestRepo *repositories.RequestRepository, taskService services.TaskService) {
 	r := echo.New()
 	r.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:3000"},
+		AllowOrigins: []string{"http://localhost:3000", "http://127.0.0.1:3000"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 	EnvironmentRoutes(r, *envRepo)
 	SessionRouter(r, *sessionRepo, taskService)
-	FrontendRouter(r, *envRepo, *sessionRepo)
 	RequestRouter(r, *requestRepo)
 	r.GET("/health", func(c echo.Context) error {
 		return c.String(200, "OK")

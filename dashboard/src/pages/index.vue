@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import EnvironmentCard from '@/components/EnvironmentCard.vue';
 import { getEnvironmentsQuery } from '@/composables/queries/getEnvironmentsQuery';
+import { getSessionsQuery } from '@/composables/queries/getSessionsQuery';
 import type { Environment } from '@/types';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 const { data: environments, isPending } = getEnvironmentsQuery();
 const selectedEnvironment = ref<Environment | null>(null);
+const route = useRoute()
+const router = useRouter()
+const id = computed(() => selectedEnvironment.value?.id);
+const sessionsQuery = getSessionsQuery({ id: Number(route.params.id) });
+
+watch(selectedEnvironment, async (environment) => {
+  if (!environment) return;
+  router.push({ name: "/", params: { id: environment.id } })
+  await sessionsQuery.refetch();
+})
 </script>
 
 <template>

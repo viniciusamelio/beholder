@@ -5,10 +5,12 @@ import (
 	"beholder-api/internal/data/repositories"
 	"beholder-api/internal/dtos"
 	"beholder-api/internal/utils"
+	"beholder-api/schema"
 	"strconv"
 
 	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func EnvironmentRoutes(r *echo.Echo, repo repositories.EnvironmentRepository) *echo.Group {
@@ -84,7 +86,26 @@ func EnvironmentRoutes(r *echo.Echo, repo repositories.EnvironmentRepository) *e
 				ErrorResponse(c, *f.Code(), f.Message())
 			},
 			func(e *[]*models.Session) {
-				Response(c, 200, e)
+				sessions := []*schema.Session{}
+
+				for _, v := range *e {
+					var UpdatedAt *timestamppb.Timestamp
+					if v.UpdatedAt != nil {
+						UpdatedAt = timestamppb.New(*v.UpdatedAt)
+					}
+					sessions = append(sessions, &schema.Session{
+						Id:            int32(v.ID),
+						EnvironmentId: int32(v.EnvironmentID),
+						Tags:          v.Tags,
+						UserId:        v.UserID,
+						CreatedAt:     timestamppb.New(*v.CreatedAt),
+						UpdatedAt:     UpdatedAt,
+					})
+				}
+
+				ProtobufResponse(c, 200, &schema.EnvironmentSessions{
+					Sessions: sessions,
+				})
 			},
 		)
 		return nil

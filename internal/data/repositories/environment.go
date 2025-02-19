@@ -128,7 +128,7 @@ func (er *EnvironmentRepository) GetSessions(ID int, pagination dtos.PaginationD
 	).OFFSET(
 		pagination.Skip.Int64,
 	).ORDER_BY(
-		table.Sessions.ID.DESC(),
+		table.Sessions.CreatedAt.DESC(),
 	).Query(er.db, &dest)
 
 	if err != nil {
