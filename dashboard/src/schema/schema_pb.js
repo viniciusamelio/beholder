@@ -9,7 +9,7 @@ import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
  * Describes the file schema/schema.proto.
  */
 export const file_schema_schema = /*@__PURE__*/
-  fileDesc("ChNzY2hlbWEvc2NoZW1hLnByb3RvEgZzY2hlbWEiwAEKB1Nlc3Npb24SCgoCaWQYASABKAUSFgoOZW52aXJvbm1lbnRfaWQYAiABKAUSDwoHdXNlcl9pZBgDIAEoCRIMCgR0YWdzGAQgAygJEi4KCmNyZWF0ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKCnVwZGF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSACIAQFCDQoLX3VwZGF0ZWRfYXQiOAoTRW52aXJvbm1lbnRTZXNzaW9ucxIhCghzZXNzaW9ucxgBIAMoCzIPLnNjaGVtYS5TZXNzaW9uQgpaCC4vc2NoZW1hYgZwcm90bzM", [file_google_protobuf_timestamp]);
+  fileDesc("ChNzY2hlbWEvc2NoZW1hLnByb3RvEgZzY2hlbWEiwAEKB1Nlc3Npb24SCgoCaWQYASABKAUSFgoOZW52aXJvbm1lbnRfaWQYAiABKAUSDwoHdXNlcl9pZBgDIAEoCRIMCgR0YWdzGAQgAygJEi4KCmNyZWF0ZWRfYXQYBSABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEjMKCnVwZGF0ZWRfYXQYBiABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wSACIAQFCDQoLX3VwZGF0ZWRfYXQipgMKB1JlcXVlc3QSCgoCaWQYASABKAUSFgoOZW52aXJvbm1lbnRfaWQYAiABKAUSFwoKc2Vzc2lvbl9pZBgDIAEoBUgAiAEBEg8KB3VzZXJfaWQYBCABKAkSDgoGbWV0aG9kGAUgASgJEgwKBG5hbWUYBiABKAkSDAoEcGF0aBgHIAEoCRIUCgdoZWFkZXJzGAggASgJSAGIAQESEQoEYm9keRgJIAEoCUgCiAEBEi0KCWNhbGxlZF9hdBgKIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASLgoKY3JlYXRlZF9hdBgLIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXASMwoKdXBkYXRlZF9hdBgMIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXBIA4gBARIlCgdzZXNzaW9uGA0gASgLMg8uc2NoZW1hLlNlc3Npb25IBIgBAUINCgtfc2Vzc2lvbl9pZEIKCghfaGVhZGVyc0IHCgVfYm9keUINCgtfdXBkYXRlZF9hdEIKCghfc2Vzc2lvbiI4ChNFbnZpcm9ubWVudFNlc3Npb25zEiEKCHNlc3Npb25zGAEgAygLMg8uc2NoZW1hLlNlc3Npb25CCloILi9zY2hlbWFiBnByb3RvMw", [file_google_protobuf_timestamp]);
 
 /**
  * Describes the message schema.Session.
@@ -19,9 +19,16 @@ export const SessionSchema = /*@__PURE__*/
   messageDesc(file_schema_schema, 0);
 
 /**
+ * Describes the message schema.Request.
+ * Use `create(RequestSchema)` to create a new message.
+ */
+export const RequestSchema = /*@__PURE__*/
+  messageDesc(file_schema_schema, 1);
+
+/**
  * Describes the message schema.EnvironmentSessions.
  * Use `create(EnvironmentSessionsSchema)` to create a new message.
  */
 export const EnvironmentSessionsSchema = /*@__PURE__*/
-  messageDesc(file_schema_schema, 1);
+  messageDesc(file_schema_schema, 2);
 

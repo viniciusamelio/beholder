@@ -53,6 +53,82 @@ export declare type Session = Message<"schema.Session"> & {
 export declare const SessionSchema: GenMessage<Session>;
 
 /**
+ * @generated from message schema.Request
+ */
+export declare type Request = Message<"schema.Request"> & {
+  /**
+   * @generated from field: int32 id = 1;
+   */
+  id: number;
+
+  /**
+   * @generated from field: int32 environment_id = 2;
+   */
+  environmentId: number;
+
+  /**
+   * @generated from field: optional int32 session_id = 3;
+   */
+  sessionId?: number;
+
+  /**
+   * @generated from field: string user_id = 4;
+   */
+  userId: string;
+
+  /**
+   * @generated from field: string method = 5;
+   */
+  method: string;
+
+  /**
+   * @generated from field: string name = 6;
+   */
+  name: string;
+
+  /**
+   * @generated from field: string path = 7;
+   */
+  path: string;
+
+  /**
+   * @generated from field: optional string headers = 8;
+   */
+  headers?: string;
+
+  /**
+   * @generated from field: optional string body = 9;
+   */
+  body?: string;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp called_at = 10;
+   */
+  calledAt?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp created_at = 11;
+   */
+  createdAt?: Timestamp;
+
+  /**
+   * @generated from field: optional google.protobuf.Timestamp updated_at = 12;
+   */
+  updatedAt?: Timestamp;
+
+  /**
+   * @generated from field: optional schema.Session session = 13;
+   */
+  session?: Session;
+};
+
+/**
+ * Describes the message schema.Request.
+ * Use `create(RequestSchema)` to create a new message.
+ */
+export declare const RequestSchema: GenMessage<Request>;
+
+/**
  * @generated from message schema.EnvironmentSessions
  */
 export declare type EnvironmentSessions = Message<"schema.EnvironmentSessions"> & {
