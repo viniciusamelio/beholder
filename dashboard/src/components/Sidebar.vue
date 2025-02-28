@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { getEnvironmentsQuery } from '@/composables/queries/getEnvironmentsQuery';
+import { useGetEnvironmentsQuery } from '@/composables/queries/getEnvironmentsQuery';
 
-const { data: environments, isPending } = getEnvironmentsQuery();
+const { data: environments, isPending } = useGetEnvironmentsQuery();
 </script>
 
 <template>

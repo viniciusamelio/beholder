@@ -1,9 +1,9 @@
 
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
-import { getSessionsQuery } from "./queries/getSessionsQuery";
+import { useGetSessionsQuery } from "./queries/getSessionsQuery";
 import type { Environment } from "@/types";
-import { getEnvironmentsQuery } from "./queries/getEnvironmentsQuery";
+import { useGetEnvironmentsQuery } from "./queries/getEnvironmentsQuery";
 
 export const useEnvironments = defineStore("environments", () => {
     const selectedEnvironment = ref<Environment | null>(null);
@@ -13,6 +13,6 @@ export const useEnvironments = defineStore("environments", () => {
         selectEnvironment : (environment: Environment) => selectedEnvironment.value = environment,  
         selectedEnvironment,
         id,
-        environments : () => getEnvironmentsQuery(),
+        environments : () => useGetEnvironmentsQuery(),
     }
 });

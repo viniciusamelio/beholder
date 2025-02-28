@@ -2,7 +2,7 @@ import { env } from "@/env";
 import { useQuery } from "@pinia/colada"
 
 
-export const getRequestsQuery = (id: number) => { 
+export const useGetRequestsQuery = (id: number) => { 
     return useQuery({
         key: () => ["get-requests", id],
         query: async () => {

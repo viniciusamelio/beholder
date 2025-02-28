@@ -2,7 +2,7 @@ import { env } from '@/env';
 import type { Environment } from '@/types';
 import { useQuery } from '@pinia/colada';
 
-export const getEnvironmentsQuery = () => { 
+export const useGetEnvironmentsQuery = () => { 
     return useQuery({
         key: () => ["get-environments"],
         query: async () => {

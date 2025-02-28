@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import EnvironmentCard from '@/components/EnvironmentCard.vue';
-import { getSessionsQuery } from '@/composables/queries/getSessionsQuery';
+import { useGetSessionsQuery } from '@/composables/queries/getSessionsQuery';
 import { useEnvironments } from '@/composables/useEnvironments';
 
 const environment = useEnvironments();
+const sessionsQuery = useGetSessionsQuery();
 const { isPending, data: envs } = environment.environments();
 
-const sessionsQuery = getSessionsQuery();
-environment.$subscribe((mutation, state) => {
+environment.$subscribe((_, state) => {
   if (state.selectedEnvironment) {
-    sessionsQuery.refetch();
+    sessionsQuery.refetch(state.selectedEnvironment.id);
   }
 });
 </script>
