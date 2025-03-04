@@ -144,3 +144,19 @@ export declare type EnvironmentSessions = Message<"schema.EnvironmentSessions"> 
  */
 export declare const EnvironmentSessionsSchema: GenMessage<EnvironmentSessions>;
 
+/**
+ * @generated from message schema.EnvironmentRequests
+ */
+export declare type EnvironmentRequests = Message<"schema.EnvironmentRequests"> & {
+  /**
+   * @generated from field: repeated schema.Request requests = 1;
+   */
+  requests: Request[];
+};
+
+/**
+ * Describes the message schema.EnvironmentRequests.
+ * Use `create(EnvironmentRequestsSchema)` to create a new message.
+ */
+export declare const EnvironmentRequestsSchema: GenMessage<EnvironmentRequests>;
+

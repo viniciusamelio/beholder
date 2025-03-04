@@ -33,3 +33,7 @@ message Request {
 message EnvironmentSessions {
     repeated Session sessions = 1;
 }
+
+message EnvironmentRequests{
+    repeated Request requests = 1;
+}

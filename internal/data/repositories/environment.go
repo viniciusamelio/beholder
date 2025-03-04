@@ -144,11 +144,8 @@ func (er *EnvironmentRepository) GetRequests(ID int, pagination dtos.PaginationD
 		table.Requests.AllColumns,
 	).FROM(
 		table.Requests.INNER_JOIN(
-			table.Sessions,
-			table.Sessions.ID.EQ(table.Requests.SessionID),
-		).INNER_JOIN(
 			table.Environments,
-			table.Environments.ID.EQ(table.Sessions.EnvironmentID),
+			table.Environments.ID.EQ(table.Requests.EnvironmentID),
 		),
 	).WHERE(
 		table.Environments.ID.EQ(sqlite.Int32(int32(ID))),
@@ -157,12 +154,11 @@ func (er *EnvironmentRepository) GetRequests(ID int, pagination dtos.PaginationD
 	).OFFSET(
 		pagination.Skip.Int64,
 	).ORDER_BY(
-		table.Requests.ID.DESC(),
+		table.Requests.CreatedAt.DESC(),
 	).Query(er.db, &dest)
 
 	if err != nil {
 		return utils.NewLeft[utils.Failure, *[]*models.Request](utils.NewUnknownFailure(err.Error(), nil))
 	}
-
 	return utils.NewRight[utils.Failure](models.RequestsFromDataModels(dest))
 }

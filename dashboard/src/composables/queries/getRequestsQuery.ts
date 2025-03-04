@@ -1,13 +1,16 @@
 import { env } from "@/env";
-import { useQuery } from "@pinia/colada"
+import { EnvironmentRequestsSchema, type Request } from "@/schema/schema_pb";
+import { fromBinary } from "@bufbuild/protobuf";
+import { useQuery } from "./useQuery";
 
 
-export const useGetRequestsQuery = (id: number) => { 
-    return useQuery({
-        key: () => ["get-requests", id],
-        query: async () => {
-            const response = await fetch(`${env.baseUrl}/environment/${id}/requests`);
-            return await response.json() as Request[];
-        }
-    })
+export const useGetRequestsQuery = () => {
+    const query = async (id: string) => {
+        const response = await fetch(`${env.baseUrl}/environment/${id}/requests`);
+        const bytes = await response.bytes();
+        const value = fromBinary(EnvironmentRequestsSchema, bytes);
+        return value.requests;
+    }
+
+    return useQuery((id:string) => query(id));
 }
