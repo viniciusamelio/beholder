@@ -13,6 +13,7 @@ const { environment, selected } = defineProps<{ environment: Environment, select
                 <uk-icon icon="chevron-right"></uk-icon>
             </div>
             <p v-text="environment.name"></p>
+            <p class="text-foreground text-sm opacity-70" v-text="environment.base_url"></p>
         </h3>
         <p class="mt-4 flex flex-row gap-2">
             <span v-for="tag in environment.tags" class="uk-badge p-3" v-text="tag"></span>
