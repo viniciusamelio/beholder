@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import EnvironmentCard from '@/components/EnvironmentCard.vue';
+import RequestCard from '@/components/molecules/RequestCard.vue';
+import SessionCard from '@/components/molecules/SessionCard.vue';
+import RequestTabSkeleton from '@/components/organisms/RequestTabSkeleton.vue';
+import SessionTabSkeleton from '@/components/organisms/SessionTabSkeleton.vue';
 import { useGetRequestsQuery } from '@/composables/queries/getRequestsQuery';
 import { useGetSessionsQuery } from '@/composables/queries/getSessionsQuery';
 import { useEnvironments } from '@/composables/useEnvironments';
@@ -44,28 +48,11 @@ const switchTab = (tab: "sessions" | "requests") => {
 
       <div v-if="activeTab == 'sessions'" class="flex flex-col gap-2 mt-4">
         <div v-if="sessionsQuery.isPending.value" class="flex flex-col gap-2">
-          <div v-for="i in 8" :key="i" class="w-full rounded-lg p-4 h-32 bg-card animate-pulse" />
+            <SessionTabSkeleton />
         </div>
         <div v-else>
           <div v-if="(sessionsQuery.data.value?.length ?? 0) > 0">
-            <div v-for="session in sessionsQuery.data.value" class="uk-card uk-card-body max-w-sm">
-              <div class="flex flex-row gap-2 border-b border-border pb-2">
-                <div class="size-5">
-                  <uk-icon icon="hash"></uk-icon>
-                </div>
-                <h3 class="uk-card-title" v-text="session.id"></h3>
-              </div>
-
-              <div class="flex flex-row gap-2 my-4 items-center">
-                <div class="size-5">
-                  <uk-icon icon="user"></uk-icon>
-                </div>
-                <p v-text="session.userId"></p>
-              </div>
-              <p class="mt-4 flex flex-row gap-2">
-                <span v-for="tag in session.tags" class="uk-badge uk-badge-secondary" v-text="tag"></span>
-              </p>
-            </div>
+            <SessionCard v-for="session in sessionsQuery.data.value" :session="session" />
           </div>
           <div v-else>
             <p class="text-sm text-foreground">
@@ -76,34 +63,11 @@ const switchTab = (tab: "sessions" | "requests") => {
       </div>
       <div v-else class="flex flex-col gap-2">
         <div v-if="requestsQuery.isPending.value" class="flex flex-col gap-2">
-          <div v-for="i in 8" :key="i" class="w-full rounded-lg p-4 h-32 bg-card animate-pulse" />
+          <RequestTabSkeleton />
         </div>
         <div v-else>
           <div v-if="(requestsQuery.data.value?.length ?? 0) > 0">
-            <div v-for="request in requestsQuery.data.value" class="uk-card uk-card-body max-w-sm">
-              <div class="flex flex-row gap-2 border-b border-border pb-2 justify-between">
-                <h3 class="uk-card-title" v-text="request.name"></h3>
-                <div class="flex flex-row gap-2 items-center">
-                  <p class="text-sm text-foreground font-bold" v-text="request.path"></p>
-                  <span class="uk-badge font-bold text-primary" v-text="request.method"></span>
-                </div>
-              </div>
-
-              <div class="flex flex-col">
-                <p v-text="request.headers"></p>
-                <p v-text="request.body"></p>
-              </div>
-
-              <div v-if="request.userId" class="flex flex-row gap-2 my-4 items-center">
-                <div class="size-5">
-                  <uk-icon icon="user"></uk-icon>
-                </div>
-                <p v-text="request.userId"></p>
-              </div>
-              <div>
-
-              </div>
-            </div>
+           <RequestCard v-for="request in requestsQuery.data.value" :request="request" />
           </div>
           <div v-else>
             <p class="text-sm text-foreground">

@@ -48,6 +48,7 @@
 
   .dark {
     --background: 240 21% 15%;
+    --success: 240 21% 15%;
     --foreground: 226 64% 88%;
     --muted: 240 12% 19%;
     --muted-foreground: 240 12% 69%;
