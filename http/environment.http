@@ -1,5 +1,9 @@
 @BASE=http://localhost:8080
 
+### Get envs
+GET {{BASE}}/environment
+Content-Type: application/json
+
 ### Create env
 POST {{BASE}}/environment
 Content-Type: application/json
@@ -12,11 +16,11 @@ Content-Type: application/json
 }
 
 ### Update env
-PUT {{BASE}}/environment/-545255424
+PUT {{BASE}}/environment/-1287647232
 Content-Type: application/json
 
 {
-    "name" : "Meu env editadinho",
+    "name" : "Meu env editado",
     "tags" : ["dev", "mvp"],
     "description" : "Então pega essa descrição",
     "base_url" : "https://webhook.site/bae63b0a-0234-4cb1-8a06-d395c8871f0f"

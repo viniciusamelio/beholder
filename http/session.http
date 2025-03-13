@@ -5,9 +5,9 @@ POST {{BASE}}/session
 Content-Type: application/json
 
 {
-    "environment_id" : 1459621888,
-    "user_id" : "vini.jhonson",
-    "tags" : ["homolog", "beta-tester", "cool-tag"]
+    "environment_id" : -1287647232,
+    "user_id" : "vini.amelio",
+    "tags" : ["hml", "beta-tester"]
 }
 
 ### Replay Session

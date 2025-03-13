@@ -38,7 +38,6 @@ func main() {
 			func(db *sql.DB) {
 				goose.SetBaseFS(migrations.Migrations)
 				goose.Up(db, "migrations")
-
 			},
 			crons.Crons,
 			router.Router,

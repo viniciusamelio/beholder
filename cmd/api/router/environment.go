@@ -6,7 +6,6 @@ import (
 	"beholder-api/internal/dtos"
 	"beholder-api/internal/utils"
 	"beholder-api/schema"
-	"fmt"
 	"strconv"
 
 	"github.com/go-playground/validator"
@@ -86,7 +85,6 @@ func EnvironmentRoutes(r *echo.Echo, repo repositories.EnvironmentRepository) *e
 				ErrorResponse(c, *f.Code(), f.Message())
 			},
 			func(e *[]*models.Request) {
-				fmt.Print(e)
 				requests := []*schema.Request{}
 				for _, v := range *e {
 					var UpdatedAt *timestamppb.Timestamp

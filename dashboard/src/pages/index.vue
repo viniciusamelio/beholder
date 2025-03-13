@@ -66,7 +66,7 @@ const switchTab = (tab: "sessions" | "requests") => {
           <RequestTabSkeleton />
         </div>
         <div v-else>
-          <div v-if="(requestsQuery.data.value?.length ?? 0) > 0">
+          <div class="flex flex-col gap-2" v-if="(requestsQuery.data.value?.length ?? 0) > 0" >
            <RequestCard v-for="request in requestsQuery.data.value" :request="request" />
           </div>
           <div v-else>

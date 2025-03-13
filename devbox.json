@@ -9,7 +9,8 @@
     "tailwindcss@latest",
     "protoc-gen-go@latest",
     "protobuf@latest",
-    "protoc-gen-es@latest"
+    "protoc-gen-es@latest",
+    "bun@latest"
   ],
   "shell": {
     "init_hook": [

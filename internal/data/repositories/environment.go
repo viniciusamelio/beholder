@@ -62,9 +62,14 @@ func (er *EnvironmentRepository) GetDetailed(id int, pagination dtos.PaginationD
 			table.Sessions,
 			table.Sessions.EnvironmentID.EQ(sqlite.Int32(int32(id))),
 		),
-	).WHERE(
-		table.Environments.ID.EQ(sqlite.Int32(int32(id))),
-	).Query(er.db, &environment)
+	).
+		ORDER_BY(
+			table.Environments.CreatedAt.DESC(),
+		).
+		WHERE(
+			table.Environments.ID.EQ(sqlite.Int32(int32(id))),
+		).
+		Query(er.db, &environment)
 	if err != nil {
 		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
 	}
