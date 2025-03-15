@@ -99,6 +99,16 @@ func RequestsFromDataModels(r []model.Requests) *[]*Request {
 	return &requests
 }
 
+func RequestsFromDataModelsPointer(r *[]model.Requests) *[]*Request {
+	requests := []*Request{}
+
+	for i := 0; i < len(*r); i++ {
+		requests = append(requests, RequestFromDataModel((*r)[i]))
+	}
+
+	return &requests
+}
+
 func RequestsFromFullDataModels(r []FullRequestDataModel) *[]*Request {
 	requests := []*Request{}
 

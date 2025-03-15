@@ -334,6 +334,58 @@ func (x *EnvironmentRequests) GetRequests() []*Request {
 	return nil
 }
 
+type SessionRequests struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Session       *Session               `protobuf:"bytes,1,opt,name=session,proto3" json:"session,omitempty"`
+	Requests      []*Request             `protobuf:"bytes,2,rep,name=requests,proto3" json:"requests,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SessionRequests) Reset() {
+	*x = SessionRequests{}
+	mi := &file_schema_schema_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SessionRequests) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SessionRequests) ProtoMessage() {}
+
+func (x *SessionRequests) ProtoReflect() protoreflect.Message {
+	mi := &file_schema_schema_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SessionRequests.ProtoReflect.Descriptor instead.
+func (*SessionRequests) Descriptor() ([]byte, []int) {
+	return file_schema_schema_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *SessionRequests) GetSession() *Session {
+	if x != nil {
+		return x.Session
+	}
+	return nil
+}
+
+func (x *SessionRequests) GetRequests() []*Request {
+	if x != nil {
+		return x.Requests
+	}
+	return nil
+}
+
 var File_schema_schema_proto protoreflect.FileDescriptor
 
 var file_schema_schema_proto_rawDesc = string([]byte{
@@ -398,8 +450,15 @@ var file_schema_schema_proto_rawDesc = string([]byte{
 	0x6f, 0x6e, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x73, 0x12, 0x2b,
 	0x0a, 0x08, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b,
 	0x32, 0x0f, 0x2e, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
-	0x74, 0x52, 0x08, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x73, 0x42, 0x0a, 0x5a, 0x08, 0x2e,
-	0x2f, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x52, 0x08, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x73, 0x22, 0x69, 0x0a, 0x0f, 0x53,
+	0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x73, 0x12, 0x29,
+	0x0a, 0x07, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32,
+	0x0f, 0x2e, 0x73, 0x63, 0x68, 0x65, 0x6d, 0x61, 0x2e, 0x53, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e,
+	0x52, 0x07, 0x73, 0x65, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x2b, 0x0a, 0x08, 0x72, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0f, 0x2e, 0x73, 0x63,
+	0x68, 0x65, 0x6d, 0x61, 0x2e, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x52, 0x08, 0x72, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x73, 0x42, 0x0a, 0x5a, 0x08, 0x2e, 0x2f, 0x73, 0x63, 0x68, 0x65,
+	0x6d, 0x61, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 })
 
 var (
@@ -414,28 +473,31 @@ func file_schema_schema_proto_rawDescGZIP() []byte {
 	return file_schema_schema_proto_rawDescData
 }
 
-var file_schema_schema_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_schema_schema_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_schema_schema_proto_goTypes = []any{
 	(*Session)(nil),               // 0: schema.Session
 	(*Request)(nil),               // 1: schema.Request
 	(*EnvironmentSessions)(nil),   // 2: schema.EnvironmentSessions
 	(*EnvironmentRequests)(nil),   // 3: schema.EnvironmentRequests
-	(*timestamppb.Timestamp)(nil), // 4: google.protobuf.Timestamp
+	(*SessionRequests)(nil),       // 4: schema.SessionRequests
+	(*timestamppb.Timestamp)(nil), // 5: google.protobuf.Timestamp
 }
 var file_schema_schema_proto_depIdxs = []int32{
-	4, // 0: schema.Session.created_at:type_name -> google.protobuf.Timestamp
-	4, // 1: schema.Session.updated_at:type_name -> google.protobuf.Timestamp
-	4, // 2: schema.Request.called_at:type_name -> google.protobuf.Timestamp
-	4, // 3: schema.Request.created_at:type_name -> google.protobuf.Timestamp
-	4, // 4: schema.Request.updated_at:type_name -> google.protobuf.Timestamp
-	0, // 5: schema.Request.session:type_name -> schema.Session
-	0, // 6: schema.EnvironmentSessions.sessions:type_name -> schema.Session
-	1, // 7: schema.EnvironmentRequests.requests:type_name -> schema.Request
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	5,  // 0: schema.Session.created_at:type_name -> google.protobuf.Timestamp
+	5,  // 1: schema.Session.updated_at:type_name -> google.protobuf.Timestamp
+	5,  // 2: schema.Request.called_at:type_name -> google.protobuf.Timestamp
+	5,  // 3: schema.Request.created_at:type_name -> google.protobuf.Timestamp
+	5,  // 4: schema.Request.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 5: schema.Request.session:type_name -> schema.Session
+	0,  // 6: schema.EnvironmentSessions.sessions:type_name -> schema.Session
+	1,  // 7: schema.EnvironmentRequests.requests:type_name -> schema.Request
+	0,  // 8: schema.SessionRequests.session:type_name -> schema.Session
+	1,  // 9: schema.SessionRequests.requests:type_name -> schema.Request
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_schema_schema_proto_init() }
@@ -451,7 +513,7 @@ func file_schema_schema_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_schema_schema_proto_rawDesc), len(file_schema_schema_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

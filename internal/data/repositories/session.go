@@ -63,6 +63,33 @@ func (sr *SessionRepository) Get(pagination dtos.PaginationDto) utils.Either[uti
 	return utils.NewRight[utils.Failure](models.SessionsFromFullDataModel(dest))
 }
 
+func (sr *SessionRepository) GetByID(id int) utils.Either[utils.Failure, *models.Session] {
+	dest := models.FullSessionDataModel{}
+	err := table.Sessions.SELECT(
+		table.Sessions.AllColumns,
+		table.Environments.AllColumns,
+		table.Requests.AllColumns,
+	).FROM(
+		table.Sessions.INNER_JOIN(
+			table.Environments,
+			table.Sessions.EnvironmentID.EQ(table.Environments.ID),
+		),
+		table.Sessions.INNER_JOIN(
+			table.Requests,
+			table.Sessions.ID.EQ(table.Requests.SessionID),
+		),
+	).WHERE(
+		table.Sessions.ID.EQ(sqlite.Int32(int32(id))),
+	).Query(sr.db, &dest)
+
+	if err != nil {
+		code := 400
+		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("failed to get session", &code))
+	}
+
+	return utils.NewRight[utils.Failure](models.SessionFromFullDataModel(dest))
+}
+
 func (sr *SessionRepository) Delete(id int) utils.Either[utils.Failure, bool] {
 	_, err := table.Sessions.DELETE().WHERE(
 		table.Sessions.ID.EQ(

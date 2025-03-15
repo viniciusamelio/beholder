@@ -15,11 +15,13 @@ type Session struct {
 	Tags          []string   `json:"tags,omitempty"`
 
 	Environment *Environment `json:"environment,omitempty"`
+	Requests    *[]*Request  `json:"requests,omitempty"`
 }
 
 type FullSessionDataModel struct {
 	model.Sessions
 	Environment *model.Environments
+	Requests    *[]*model.Requests
 }
 
 func SessionFromDataModel(model model.Sessions) *Session {
@@ -35,6 +37,13 @@ func SessionFromDataModel(model model.Sessions) *Session {
 }
 
 func SessionFromFullDataModel(model FullSessionDataModel) *Session {
+	var requests []*Request
+	if model.Requests != nil {
+		for _, request := range *model.Requests {
+			requests = append(requests, RequestFromDataModel(*request))
+		}
+	}
+
 	return &Session{
 		ID:            int(*model.ID),
 		EnvironmentID: int(*model.EnvironmentID),
@@ -43,6 +52,7 @@ func SessionFromFullDataModel(model FullSessionDataModel) *Session {
 		UpdatedAt:     model.UpdatedAt,
 		Tags:          strings.Split(*model.Tags, ", "),
 		Environment:   EnvironmentFromDataModel(*model.Environment),
+		Requests:      &requests,
 	}
 }
 
