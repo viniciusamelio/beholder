@@ -73,14 +73,17 @@ func (sr *SessionRepository) GetByID(id int) utils.Either[utils.Failure, *models
 		table.Sessions.INNER_JOIN(
 			table.Environments,
 			table.Sessions.EnvironmentID.EQ(table.Environments.ID),
-		),
-		table.Sessions.INNER_JOIN(
+		).INNER_JOIN(
 			table.Requests,
 			table.Sessions.ID.EQ(table.Requests.SessionID),
 		),
 	).WHERE(
 		table.Sessions.ID.EQ(sqlite.Int32(int32(id))),
-	).Query(sr.db, &dest)
+	).
+		ORDER_BY(
+			table.Requests.CalledAt.ASC(),
+		).
+		Query(sr.db, &dest)
 
 	if err != nil {
 		code := 400
@@ -114,6 +117,9 @@ func (sr *SessionRepository) GetRequests(id int) utils.Either[utils.Failure, *dt
 			table.Sessions.Table,
 			table.Requests.SessionID.EQ(table.Sessions.ID),
 		)).
+		ORDER_BY(
+			table.Requests.CalledAt.ASC(),
+		).
 		WHERE(
 			table.Requests.SessionID.EQ(
 				sqlite.Int32(int32(id))),

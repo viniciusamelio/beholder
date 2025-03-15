@@ -1,18 +1,15 @@
 import { env } from "@/env";
 import { SessionRequestsSchema } from "@/schema/schema_pb";
 import { fromBinary } from "@bufbuild/protobuf";
-import { useQuery } from "@pinia/colada";
+import { useQuery } from "./useQuery";
 
-export const useGetSessionQuery = (id: string) => {
+export const useGetSessionQuery = () => {
     const query = async (id: string) => {
-        const response = await fetch(`${env.baseUrl}/sessions/${id}`);
+        const response = await fetch(`${env.baseUrl}/session/${id}`);
         const bytes = await response.bytes();
         const value = fromBinary(SessionRequestsSchema, bytes);
         return value;
     }
     
-    return useQuery({
-        key: () => ["get-session", id],
-        query: () => query(id)
-    });
+    return useQuery((id: string) => query(id));
 }

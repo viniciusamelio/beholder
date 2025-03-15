@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { Session } from '@/schema/schema_pb';
 
-const { session } = defineProps<{ session: Session }>();
+const { session, selected } = defineProps<{ session: Session, selected : boolean }>();
 </script>
 
 <template>
-    <div class="uk-card uk-card-body max-w-sm">
+    <div class="uk-card uk-card-body max-w-sm cursor-pointer" :class="selected ? 'border-primary border-4 ring-4 ring-primary' : ''">
         <div class="flex flex-row gap-2 border-b border-border pb-2">
             <div class="size-5">
                 <uk-icon icon="hash"></uk-icon>

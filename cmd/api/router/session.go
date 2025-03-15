@@ -41,17 +41,25 @@ func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskServic
 			},
 			func(s *models.Session) {
 
+				var updatedAt *timestamppb.Timestamp
+				if s.UpdatedAt != nil {
+					updatedAt = timestamppb.New(*s.UpdatedAt)
+				}
 				session := schema.Session{
 					Id:            int32(s.ID),
 					EnvironmentId: int32(s.EnvironmentID),
 					UserId:        s.UserID,
 					CreatedAt:     timestamppb.New(*s.CreatedAt),
-					UpdatedAt:     timestamppb.New(*s.UpdatedAt),
+					UpdatedAt:     updatedAt,
 					Tags:          s.Tags,
 				}
 
 				var requests []*schema.Request
 				for _, request := range *s.Requests {
+					var updatedAt *timestamppb.Timestamp
+					if request.UpdatedAt != nil {
+						updatedAt = timestamppb.New(*request.UpdatedAt)
+					}
 					requests = append(requests, &schema.Request{
 						Id:            int32(request.ID),
 						EnvironmentId: int32(request.EnvironmentID),
@@ -64,7 +72,7 @@ func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskServic
 						Body:          request.Body,
 						CalledAt:      timestamppb.New(request.CalledAt),
 						CreatedAt:     timestamppb.New(request.CreatedAt),
-						UpdatedAt:     timestamppb.New(*request.UpdatedAt),
+						UpdatedAt:     updatedAt,
 					})
 				}
 
@@ -72,7 +80,6 @@ func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskServic
 					Session:  &session,
 					Requests: requests,
 				})
-				Response(c, 200, s)
 			},
 		)
 		return nil
