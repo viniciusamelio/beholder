@@ -15,7 +15,7 @@ var surreal *surrealdb.DB
 func InitDB() *surrealdb.DB {
 	dbUrl := os.Getenv("DB_URL")
 
-	db, err := surrealdb.New(dbUrl)
+	db, err := surrealdb.New(fmt.Sprintf("wss://%s", dbUrl))
 	if err != nil {
 		panic(err)
 	}

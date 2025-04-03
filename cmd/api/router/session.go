@@ -6,9 +6,11 @@ import (
 	"beholder-api/internal/dtos"
 	"beholder-api/internal/services"
 	"beholder-api/internal/utils"
+	"beholder-api/schema"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskService services.TaskService) {
@@ -26,6 +28,62 @@ func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskServic
 		)
 		return nil
 	}))
+
+	g.GET("/:id", func(c echo.Context) error {
+		id := c.Param("id")
+		parsedId, err := strconv.ParseInt(id, 10, 64)
+		if err != nil {
+			return ErrorResponse(c, 400, err.Error())
+		}
+		repo.GetByID(int(parsedId)).Fold(
+			func(f utils.Failure) {
+				ErrorResponse(c, 400, f.Message())
+			},
+			func(s *models.Session) {
+
+				var updatedAt *timestamppb.Timestamp
+				if s.UpdatedAt != nil {
+					updatedAt = timestamppb.New(*s.UpdatedAt)
+				}
+				session := schema.Session{
+					Id:            int32(s.ID),
+					EnvironmentId: int32(s.EnvironmentID),
+					UserId:        s.UserID,
+					CreatedAt:     timestamppb.New(*s.CreatedAt),
+					UpdatedAt:     updatedAt,
+					Tags:          s.Tags,
+				}
+
+				var requests []*schema.Request
+				for _, request := range *s.Requests {
+					var updatedAt *timestamppb.Timestamp
+					if request.UpdatedAt != nil {
+						updatedAt = timestamppb.New(*request.UpdatedAt)
+					}
+					requests = append(requests, &schema.Request{
+						Id:            int32(request.ID),
+						EnvironmentId: int32(request.EnvironmentID),
+						SessionId:     &session.Id,
+						UserId:        request.UserID,
+						Method:        request.Method,
+						Name:          request.Name,
+						Path:          request.Path,
+						Headers:       request.Headers,
+						Body:          request.Body,
+						CalledAt:      timestamppb.New(request.CalledAt),
+						CreatedAt:     timestamppb.New(request.CreatedAt),
+						UpdatedAt:     updatedAt,
+					})
+				}
+
+				ProtobufResponse(c, 200, &schema.SessionRequests{
+					Session:  &session,
+					Requests: requests,
+				})
+			},
+		)
+		return nil
+	})
 
 	g.POST("", func(c echo.Context) error {
 		input := dtos.CreateSessionDto{}
@@ -51,11 +109,11 @@ func SessionRouter(r *echo.Echo, repo repositories.SessionRepository, taskServic
 			return ErrorResponse(c, 400, err.Error())
 		}
 
-		repo.GetCalls(int(parsedId)).Fold(
+		repo.GetRequests(int(parsedId)).Fold(
 			func(f utils.Failure) {
 				ErrorResponse(c, 400, f.Message())
 			},
-			func(c []*models.Call) {
+			func(c *dtos.GetRequestsFromSessionResponseDto) {
 				taskService.Execute(c)
 			},
 		)

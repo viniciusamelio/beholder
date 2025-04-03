@@ -1,21 +1,27 @@
 @BASE=http://localhost:8080
 
+### Get envs
+GET {{BASE}}/environment
+Content-Type: application/json
+
 ### Create env
 POST {{BASE}}/environment
 Content-Type: application/json
 
 {
-    "name" : "dev",
-    "tags" : ["dev", "ambiente de dev"],
-    "base_url" : "https://dev.viniciusamelio.com/"
+    "name" : "Novo env",
+    "description": "Ambiente de testes pessoal",
+    "tags" : ["hml", "staging"],
+    "base_url" : "http://stg.viniciusamelio.com.br"
 }
 
 ### Update env
-PUT {{BASE}}/environment/2145670309036949504
+PUT {{BASE}}/environment/-1287647232
 Content-Type: application/json
 
 {
-    "name" : "homolog editado 3x",
+    "name" : "Meu env editado",
     "tags" : ["dev", "mvp"],
+    "description" : "Então pega essa descrição",
     "base_url" : "https://webhook.site/bae63b0a-0234-4cb1-8a06-d395c8871f0f"
 }

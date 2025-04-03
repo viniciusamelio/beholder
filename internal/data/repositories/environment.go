@@ -3,88 +3,167 @@ package repositories
 import (
 	"beholder-api/internal/application/models"
 	"beholder-api/internal/dtos"
-	"beholder-api/internal/gen/som/where"
-	"beholder-api/internal/services"
+	"beholder-api/internal/jet/model"
+	"beholder-api/internal/jet/table"
 	"beholder-api/internal/utils"
-	"context"
+	"database/sql"
+	"strings"
 	"time"
+
+	"github.com/go-jet/jet/v2/sqlite"
 )
 
 type EnvironmentRepository struct {
-	ds        services.SomDatasource
+	db        *sql.DB
 	tableName string
 }
 
-func NewEnvironmentRepository(ds *services.SomDatasource) *EnvironmentRepository {
-	return &EnvironmentRepository{ds: *ds, tableName: "environment"}
+func NewEnvironmentRepository(db *sql.DB) *EnvironmentRepository {
+	return &EnvironmentRepository{tableName: "environment", db: db}
 }
 
 func (er *EnvironmentRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Environment] {
-	context := context.Background()
-	foundItems, err := er.ds.Environment().
-		Query().
-		Limit(int(pagination.Take.Int64)).
-		Offset(int(pagination.Skip.Int64)).
-		Order().
-		All(context)
+	dest := []model.Environments{}
+
+	err := table.Environments.SELECT(
+		table.Environments.ID,
+		table.Environments.Name,
+		table.Environments.Description,
+		table.Environments.Tags,
+		table.Environments.BaseURL,
+	).FROM(
+		table.Environments,
+	).LIMIT(
+		pagination.Take.Int64,
+	).OFFSET(
+		pagination.Skip.Int64,
+	).ORDER_BY(
+		table.Environments.ID.DESC(),
+	).Query(er.db, &dest)
+
 	if err != nil {
 		return utils.NewLeft[utils.Failure, *[]*models.Environment](utils.NewUnknownFailure(err.Error(), nil))
 	}
-	return utils.NewRight[utils.Failure](&foundItems)
+
+	return utils.NewRight[utils.Failure](models.EnvironmentsFromDataModel(dest))
 }
 
 func (er *EnvironmentRepository) GetDetailed(id int, pagination dtos.PaginationDto) utils.Either[utils.Failure, *models.Environment] {
-	context := context.Background()
-	foundItem, err := er.ds.Environment().
-		Query().
-		Filter(where.Environment.UID.Equal(id)).
-		First(context)
+	environment := model.Environments{}
+
+	err := table.Environments.SELECT(
+		table.Environments.ID,
+		table.Environments.Name,
+		table.Environments.Description,
+		table.Environments.Tags,
+		table.Environments.BaseURL,
+	).FROM(
+		table.Environments.INNER_JOIN(
+			table.Sessions,
+			table.Sessions.EnvironmentID.EQ(sqlite.Int32(int32(id))),
+		),
+	).
+		ORDER_BY(
+			table.Environments.CreatedAt.DESC(),
+		).
+		WHERE(
+			table.Environments.ID.EQ(sqlite.Int32(int32(id))),
+		).
+		Query(er.db, &environment)
 	if err != nil {
 		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
 	}
-	sessions, err := er.ds.Session().
-		Query().
-		Filter(where.Session.EnvUID.Equal(id)).
-		Limit(int(pagination.Take.Int64)).
-		Offset(int(pagination.Skip.Int64)).
-		Order().
-		All(context)
-	if err != nil {
-		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
-	}
-	foundItem.Sessions = &sessions
-	return utils.NewRight[utils.Failure](foundItem)
+	return utils.NewRight[utils.Failure](models.EnvironmentFromDataModel(environment))
 }
 
-func (er *EnvironmentRepository) Create(env models.Environment) utils.Either[utils.Failure, *models.Environment] {
-	now := time.Now()
-	env.CreatedAt = &now
-	env.UID = utils.GenSnowflakeID()
-	err := er.ds.Environment().Create(context.Background(), &env)
+func (er *EnvironmentRepository) Create(env model.Environments) utils.Action[*models.Environment] {
+	err := table.Environments.INSERT().MODEL(env).
+		RETURNING(table.Environments.AllColumns).
+		Query(er.db, &env)
+
 	if err != nil {
-		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
+		status := 400
+		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), &status))
 	}
-	return utils.NewRight[utils.Failure](&env)
+	return utils.NewRight[utils.Failure](models.EnvironmentFromDataModel(env))
+
 }
 
 func (er *EnvironmentRepository) Update(ID int, env models.Environment) utils.Either[utils.Failure, *models.Environment] {
-	context := context.Background()
-	foundItem, err := er.ds.Environment().Query().Filter(
-		where.Environment.UID.Equal(
-			ID,
+	dest := model.Environments{}
+	err := table.Environments.UPDATE(
+		table.Environments.Name,
+		table.Environments.Description,
+		table.Environments.BaseURL,
+		table.Environments.Tags,
+		table.Environments.UpdatedAt,
+	).SET(
+		&env.Name,
+		&env.Description,
+		&env.BaseURL,
+		strings.Join(env.Tags, ", "),
+		time.Now(),
+	).
+		WHERE(
+			table.Environments.ID.EQ(sqlite.Int32(int32(ID))),
+		).
+		RETURNING(table.Environments.AllColumns).
+		Query(er.db, &dest)
+
+	if err != nil {
+		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
+	}
+
+	return utils.NewRight[utils.Failure](models.EnvironmentFromDataModel(dest))
+}
+
+func (er *EnvironmentRepository) GetSessions(ID int, pagination dtos.PaginationDto) utils.Action[*[]*models.Session] {
+	dest := []*model.Sessions{}
+	err := table.Sessions.SELECT(
+		table.Sessions.AllColumns,
+	).FROM(
+		table.Sessions.INNER_JOIN(
+			table.Environments,
+			table.Environments.ID.EQ(table.Sessions.EnvironmentID),
 		),
-	).First(context)
+	).WHERE(
+		table.Environments.ID.EQ(sqlite.Int32(int32(ID))),
+	).LIMIT(
+		pagination.Take.Int64,
+	).OFFSET(
+		pagination.Skip.Int64,
+	).ORDER_BY(
+		table.Sessions.CreatedAt.DESC(),
+	).Query(er.db, &dest)
+
 	if err != nil {
-		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
+		return utils.NewLeft[utils.Failure, *[]*models.Session](utils.NewUnknownFailure(err.Error(), nil))
 	}
-	now := time.Now()
-	foundItem.BaseUrl = env.BaseUrl
-	foundItem.Name = env.Name
-	foundItem.UpdatedAt = &now
-	foundItem.Tags = env.Tags
-	err = er.ds.Environment().Update(context, foundItem)
+
+	return utils.NewRight[utils.Failure](models.SessionsFromDataModel(dest))
+}
+
+func (er *EnvironmentRepository) GetRequests(ID int, pagination dtos.PaginationDto) utils.Action[*[]*models.Request] {
+	dest := []model.Requests{}
+	err := table.Requests.SELECT(
+		table.Requests.AllColumns,
+	).FROM(
+		table.Requests.INNER_JOIN(
+			table.Environments,
+			table.Environments.ID.EQ(table.Requests.EnvironmentID),
+		),
+	).WHERE(
+		table.Environments.ID.EQ(sqlite.Int32(int32(ID))),
+	).LIMIT(
+		pagination.Take.Int64,
+	).OFFSET(
+		pagination.Skip.Int64,
+	).ORDER_BY(
+		table.Requests.CreatedAt.DESC(),
+	).Query(er.db, &dest)
+
 	if err != nil {
-		return utils.NewLeft[utils.Failure, *models.Environment](utils.NewUnknownFailure(err.Error(), nil))
+		return utils.NewLeft[utils.Failure, *[]*models.Request](utils.NewUnknownFailure(err.Error(), nil))
 	}
-	return utils.NewRight[utils.Failure](foundItem)
+	return utils.NewRight[utils.Failure](models.RequestsFromDataModels(dest))
 }

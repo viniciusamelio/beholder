@@ -5,14 +5,18 @@ import (
 	"beholder-api/internal/services"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
-func Router(envRepo *repositories.EnvironmentRepository, sessionRepo *repositories.SessionRepository, callRepo *repositories.CallRepository, taskService services.TaskService) {
+func Router(envRepo *repositories.EnvironmentRepository, sessionRepo *repositories.SessionRepository, requestRepo *repositories.RequestRepository, taskService services.TaskService) {
 	r := echo.New()
+	r.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:3000", "http://127.0.0.1:3000"},
+		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+	}))
 	EnvironmentRoutes(r, *envRepo)
 	SessionRouter(r, *sessionRepo, taskService)
-	CallRouter(r, *callRepo)
-	FrontendRouter(r, *envRepo, *sessionRepo)
+	RequestRouter(r, *requestRepo)
 	r.GET("/health", func(c echo.Context) error {
 		return c.String(200, "OK")
 	})

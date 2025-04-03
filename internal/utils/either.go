@@ -54,3 +54,7 @@ func (l Left[L, R]) IsLeft() bool {
 func (l Left[L, R]) IsRight() bool {
 	return false
 }
+
+func FailureOf[R interface{}](err error, code int) Either[Failure, R] {
+	return NewLeft[Failure, R](NewUnknownFailure(err.Error(), &code))
+}

@@ -1,0 +1,19 @@
+@BASE=http://localhost:8080
+
+### Create request
+POST {{BASE}}/request
+Content-Type: application/json
+
+{
+    "name" : "delete project language",
+    "path" : "/1234/languages/6789",
+    "method" : "DELETE",
+    "called_at" : "2025-03-11T05:18:05Z",
+    "environment_id": -1287647232,
+    "session_id": null,
+    "user_id" : "hustle-player"
+}
+
+### Get requests
+GET {{BASE}}/request
+Content-Type: application/json

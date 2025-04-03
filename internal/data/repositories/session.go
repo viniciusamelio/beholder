@@ -3,139 +3,131 @@ package repositories
 import (
 	"beholder-api/internal/application/models"
 	"beholder-api/internal/dtos"
-	"beholder-api/internal/gen/som/where"
-	"beholder-api/internal/gen/som/with"
-	"beholder-api/internal/services"
+	"beholder-api/internal/jet/model"
+	"beholder-api/internal/jet/table"
 	"beholder-api/internal/utils"
-	"context"
-	"time"
+	"database/sql"
+	"fmt"
+
+	"github.com/go-jet/jet/v2/sqlite"
 )
 
 type SessionRepository struct {
-	ds        services.SomDatasource
+	db        *sql.DB
 	tableName string
 }
 
-func NewSessionRepository(ds *services.SomDatasource) *SessionRepository {
+func NewSessionRepository(db *sql.DB) *SessionRepository {
 	return &SessionRepository{
-		ds:        *ds,
 		tableName: "session",
+		db:        db,
 	}
 }
 
-func (sr *SessionRepository) Create(session models.Session) utils.Either[utils.Failure, *models.Session] {
-	session.UID = utils.GenSnowflakeID()
-	now := time.Now()
-	session.CreatedAt = &now
-
-	env, err := sr.ds.Environment().Query().Filter(
-		where.Environment.UID.Equal(session.EnvUID),
-	).First(
-		context.Background(),
-	)
+func (sr *SessionRepository) Create(session model.Sessions) utils.Either[utils.Failure, *models.Session] {
+	err := table.Sessions.INSERT().MODEL(session).RETURNING(
+		table.Sessions.AllColumns,
+	).Query(sr.db, &session)
 
 	if err != nil {
+		fmt.Print(err.Error())
 		code := 404
 		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("environment not found", &code))
 	}
-	session.Env = env
-	err = sr.ds.Session().Create(context.Background(), &session)
-	if err != nil {
-		code := 400
-		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("failed to create session", &code))
-	}
-	return utils.NewRight[utils.Failure](&session)
-}
 
-func (sr *SessionRepository) GetByID(id int) utils.Either[utils.Failure, *models.Session] {
-	found, err := sr.ds.Session().Query().Filter(
-		where.Session.UID.Equal(
-			id,
-		),
-	).First(
-		context.Background(),
-	)
-	if err != nil {
-		code := 404
-		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("failed to get session", &code))
-	}
-
-	return utils.NewRight[utils.Failure](found)
+	return utils.NewRight[utils.Failure](models.SessionFromDataModel(session))
 }
 
 func (sr *SessionRepository) Get(pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Session] {
-	sessions, err := sr.ds.Session().Query().
-		Limit(int(*pagination.Take.Ptr())).
-		Offset(int(pagination.Skip.Int64)).
-		Fetch(
-			with.Session.Env(),
-		).
-		All(context.Background())
+	var dest []models.FullSessionDataModel
+
+	stmt := table.Sessions.SELECT(
+		table.Sessions.AllColumns,
+		table.Environments.AllColumns,
+	).FROM(
+		table.Sessions.INNER_JOIN(
+			table.Environments,
+			table.Sessions.EnvironmentID.EQ(table.Environments.ID),
+		),
+	).ORDER_BY(table.Sessions.CreatedAt.DESC()).
+		OFFSET(pagination.Skip.Int64).
+		LIMIT(pagination.Take.Int64)
+
+	err := stmt.Query(sr.db, &dest)
+
 	if err != nil {
 		code := 400
 		return utils.NewLeft[utils.Failure, *[]*models.Session](utils.NewUnknownFailure("failed to get sessions", &code))
 	}
 
-	return utils.NewRight[utils.Failure](&sessions)
+	return utils.NewRight[utils.Failure](models.SessionsFromFullDataModel(dest))
 }
 
-func (sr *SessionRepository) GetByEnv(envUID int, pagination dtos.PaginationDto) utils.Either[utils.Failure, *[]*models.Session] {
-	sessions, err := sr.ds.Session().Query().Filter(where.Session.EnvUID.Equal(envUID)).
-		Limit(int(pagination.Take.Int64)).
-		Offset(int(pagination.Skip.Int64)).
-		Fetch(with.Session.Env()).
-		All(context.Background())
+func (sr *SessionRepository) GetByID(id int) utils.Either[utils.Failure, *models.Session] {
+	dest := models.FullSessionDataModel{}
+	err := table.Sessions.SELECT(
+		table.Sessions.AllColumns,
+		table.Environments.AllColumns,
+		table.Requests.AllColumns,
+	).FROM(
+		table.Sessions.INNER_JOIN(
+			table.Environments,
+			table.Sessions.EnvironmentID.EQ(table.Environments.ID),
+		).INNER_JOIN(
+			table.Requests,
+			table.Sessions.ID.EQ(table.Requests.SessionID),
+		),
+	).WHERE(
+		table.Sessions.ID.EQ(sqlite.Int32(int32(id))),
+	).
+		ORDER_BY(
+			table.Requests.CalledAt.ASC(),
+		).
+		Query(sr.db, &dest)
+
 	if err != nil {
 		code := 400
-		return utils.NewLeft[utils.Failure, *[]*models.Session](utils.NewUnknownFailure("failed to get sessions", &code))
+		return utils.NewLeft[utils.Failure, *models.Session](utils.NewUnknownFailure("failed to get session", &code))
 	}
 
-	return utils.NewRight[utils.Failure](&sessions)
+	return utils.NewRight[utils.Failure](models.SessionFromFullDataModel(dest))
 }
 
 func (sr *SessionRepository) Delete(id int) utils.Either[utils.Failure, bool] {
-	foundSessionOrFailure := sr.GetByID(id)
-	var result utils.Either[utils.Failure, bool]
+	_, err := table.Sessions.DELETE().WHERE(
+		table.Sessions.ID.EQ(
+			sqlite.Int32(int32(id))),
+	).Exec(sr.db)
 
-	foundSessionOrFailure.Fold(
-		func(f utils.Failure) {
-			result = utils.NewLeft[utils.Failure, bool](f)
-		},
-		func(s *models.Session) {
-			err := sr.ds.Session().Delete(context.Background(), s)
-			if err != nil {
-				code := 400
-				result = utils.NewLeft[utils.Failure, bool](utils.NewUnknownFailure("failed to delete session", &code))
-			}
-			result = utils.NewRight[utils.Failure](true)
-		},
-	)
-	return result
+	if err != nil {
+		code := 400
+		return utils.NewLeft[utils.Failure, bool](utils.NewUnknownFailure("failed to delete session", &code))
+	}
+	return utils.NewRight[utils.Failure](true)
 
 }
 
-func (sr *SessionRepository) GetCalls(id int) utils.Either[utils.Failure, []*models.Call] {
-	foundSessionOrFailure := sr.GetByID(id)
-	var result utils.Either[utils.Failure, []*models.Call]
-	foundSessionOrFailure.Fold(
-		func(f utils.Failure) {
-			result = utils.NewLeft[utils.Failure, []*models.Call](f)
-		},
-		func(s *models.Session) {
-			calls, err := sr.ds.Call().Query().Filter(
-				where.Call.SessionUID.Equal(&id),
-			).Fetch(
-				with.Call.Session(),
-				with.Call.Session().Env(),
-			).All(
-				context.Background(),
-			)
-			if err != nil {
-				code := 400
-				result = utils.NewLeft[utils.Failure, []*models.Call](utils.NewUnknownFailure("failed to get calls", &code))
-			}
-			result = utils.NewRight[utils.Failure](calls)
-		},
-	)
-	return result
+func (sr *SessionRepository) GetRequests(id int) utils.Either[utils.Failure, *dtos.GetRequestsFromSessionResponseDto] {
+	dest := dtos.GetRequestsFromSessionResponseDto{}
+	err := table.Requests.SELECT(
+		table.Requests.AllColumns.As("requests"),
+		table.Environments.BaseURL.AS("base_url"),
+	).
+		FROM(table.Requests.Table.INNER_JOIN(
+			table.Sessions.Table,
+			table.Requests.SessionID.EQ(table.Sessions.ID),
+		)).
+		ORDER_BY(
+			table.Requests.CalledAt.ASC(),
+		).
+		WHERE(
+			table.Requests.SessionID.EQ(
+				sqlite.Int32(int32(id))),
+		).Query(sr.db, &dest)
+	if err != nil {
+		code := 400
+		return utils.NewLeft[utils.Failure, *dtos.GetRequestsFromSessionResponseDto](utils.NewUnknownFailure("failed to get calls", &code))
+	}
+
+	return utils.NewRight[utils.Failure](&dest)
 }
